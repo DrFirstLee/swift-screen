@@ -499,6 +499,7 @@
             <div class="header-left">
                 <a href="index.html" class="back-btn" id="backBtn">←</a>
                 <div style="display: flex; align-items: center; gap: 12px;">
+                    <a href="index.html" class="clear-all-btn" style="background: #f0f9ff; border-color: #bae6fd; color: #0ea5e9; text-decoration: none;">Dashboard</a>
                     <button onclick="handleLogout()" class="clear-all-btn"
                         style="background: #f1f5f9; border-color: #e2e8f0; color: #64748b;">Logout</button>
                     <div class="page-title">MANAGE</div>
@@ -633,16 +634,27 @@
 
             if (!firstName || !lastName || !room) return;
 
-            const data = getData();
-            data.push({
-                id: Date.now(),
+            const dataObj = {
                 firstName: firstName,
                 lastName: lastName,
                 room: room,
                 note: note,
                 timestamp: new Date().toISOString()
-            });
+            };
 
+            // Push to Server
+            const apiBase = localStorage.getItem('swift_api_base') || "https://swift-medical-api.naranja.my";
+            fetch(`${apiBase}/screen-update`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dataObj)
+            }).then(resp => {
+                if(resp.ok) console.log("Signboard updated on server");
+            }).catch(err => console.error("Server update failed", err));
+
+            // Legacy local storage (still useful for history list)
+            const data = getData();
+            data.push(dataObj);
             saveData(data);
             renderList();
 

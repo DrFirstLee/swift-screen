@@ -281,50 +281,41 @@
         <div style="font-size: 14px; margin-top: 10px; opacity: 0.8;">Required for browser audio playback</div>
     </div>
 
-    <script>
-        let lastDataCount = JSON.parse(localStorage.getItem('swiftScreenData') || '[]').length;
+        let lastTimestamp = null;
         let audioCtx = null;
 
         // Sound activation
         document.getElementById('soundOverlay').addEventListener('click', function () {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             this.style.display = 'none';
-            // Play a silent buffer to prime the audio context on iOS
+            // Play a silent buffer to prime it
             const buffer = audioCtx.createBuffer(1, 1, 22050);
             const source = audioCtx.createBufferSource();
             source.buffer = buffer;
             source.connect(audioCtx.destination);
             source.start(0);
-
-            // Optional: play a short welcome sound
+            
             playDing();
         });
 
         function playDing() {
             if (!audioCtx) return;
             if (audioCtx.state === 'suspended') audioCtx.resume();
-
+            
             const now = audioCtx.currentTime;
-
             function playNote(freq, startTime, duration) {
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
-
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(freq, startTime);
-
                 gain.gain.setValueAtTime(0, startTime);
                 gain.gain.linearRampToValueAtTime(0.2, startTime + 0.05);
                 gain.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
-
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
-
                 osc.start(startTime);
                 osc.stop(startTime + duration);
             }
-
-            // Elegant two-tone chime (G5, then C6)
             playNote(783.99, now, 0.8);        // G5
             playNote(1046.50, now + 0.15, 1.0); // C6
         }
@@ -336,15 +327,12 @@
             const m = String(now.getMinutes()).padStart(2, '0');
             const s = String(now.getSeconds()).padStart(2, '0');
             document.getElementById('clock').textContent = `${h}:${m}:${s}`;
-
             const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
             const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-
             const month = months[now.getMonth()];
             const date = now.getDate();
             const year = now.getFullYear();
             const day = days[now.getDay()];
-
             document.getElementById('dateDisplay').textContent = `${month} ${date}, ${year} (${day})`;
         }
         updateClock();
@@ -359,39 +347,48 @@
             return `${f} ${maskedLast}`;
         }
 
-        // Render Display
-        function renderDisplay(shouldAlert = false) {
+        // Fetch and Render Display
+        async function fetchScreenData() {
             const display = document.getElementById('mainDisplay');
-            const dataString = localStorage.getItem('swiftScreenData') || '[]';
-            const data = JSON.parse(dataString);
+            const apiBase = "https://swift-medical-api.naranja.my";
 
-            if (data.length === 0) {
-                display.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">📋</div>
-                        <div class="empty-text">No patients waiting</div>
-                    </div>
-                `;
-                lastDataCount = 0;
-                return;
+            try {
+                const response = await fetch(`${apiBase}/screen-data`);
+                if (!response.ok) return;
+                
+                const latest = await response.json();
+
+                if (!latest) {
+                    display.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">📋</div>
+                            <div class="empty-text">No patients waiting</div>
+                        </div>
+                    `;
+                    lastTimestamp = null;
+                    return;
+                }
+
+                // Check for update by timestamp
+                if (latest.timestamp && latest.timestamp !== lastTimestamp) {
+                    if (lastTimestamp !== null) {
+                        playDing();
+                    }
+                    lastTimestamp = latest.timestamp;
+
+                    display.innerHTML = `
+                        <div class="status-badge">
+                            <div class="status-dot"></div>
+                            Now Calling
+                        </div>
+                        <h1>${formatAndMaskName(latest.firstName, latest.lastName)}</h1>
+                        <h3>${latest.note ? escapeHtml(latest.note) : '—'}</h3>
+                        <h2>${escapeHtml(latest.room)}</h2>
+                    `;
+                }
+            } catch (err) {
+                console.error("Failed to fetch screen data:", err);
             }
-
-            // Check for new data
-            if (shouldAlert && data.length > lastDataCount) {
-                playDing();
-            }
-            lastDataCount = data.length;
-
-            const latest = data[data.length - 1];
-            display.innerHTML = `
-                <div class="status-badge">
-                    <div class="status-dot"></div>
-                    Now Calling
-                </div>
-                <h1>${formatAndMaskName(latest.firstName, latest.lastName)}</h1>
-                <h3>${latest.note ? escapeHtml(latest.note) : '—'}</h3>
-                <h2>${escapeHtml(latest.room)}</h2>
-            `;
         }
 
         function escapeHtml(text) {
@@ -400,15 +397,9 @@
             return div.innerHTML;
         }
 
-        // Initial render
-        renderDisplay();
-
-        // Listen for storage changes
-        window.addEventListener('storage', function (e) {
-            if (e.key === 'swiftScreenData') {
-                renderDisplay(true);
-            }
-        });
+        // Initial fetch and start polling every 2 seconds
+        fetchScreenData();
+        setInterval(fetchScreenData, 2000);
     </script>
 </body>
 
