@@ -499,7 +499,8 @@
             <div class="header-left">
                 <a href="index.html" class="back-btn" id="backBtn">←</a>
                 <div style="display: flex; align-items: center; gap: 12px;">
-                    <button onclick="handleLogout()" class="clear-all-btn" style="background: #f1f5f9; border-color: #e2e8f0; color: #64748b;">Logout</button>
+                    <button onclick="handleLogout()" class="clear-all-btn"
+                        style="background: #f1f5f9; border-color: #e2e8f0; color: #64748b;">Logout</button>
                     <div class="page-title">MANAGE</div>
                     <div class="page-subtitle">Dashboard Data Management</div>
                 </div>
@@ -687,7 +688,7 @@
         async function handleLogin() {
             const u = document.getElementById('username').value;
             const p = document.getElementById('password').value;
-            const api = "https://swift-api.naranja.my";
+            const api = "https://swift-medical-api.naranja.my";
             const err = document.getElementById('loginError');
 
             try {
@@ -714,7 +715,7 @@
             const token = localStorage.getItem('swift_token');
             const loginUI = document.getElementById('loginContainer');
             const mainUI = document.getElementById('mainApp');
-            
+
             console.log("Checking auth... Token:", token);
 
             if (token && token !== "undefined") {
