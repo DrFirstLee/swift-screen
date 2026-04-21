@@ -59,7 +59,6 @@
         /* Centered Logo Header */
         .header {
             text-align: center;
-            margin-bottom: 10px;
             width: 100%;
         }
 
@@ -67,7 +66,6 @@
             width: 300px;
             max-width: 90%;
             height: auto;
-            margin-bottom: 10px;
             animation: float 6s ease-in-out infinite;
         }
 
@@ -195,22 +193,27 @@
             .container {
                 padding: 20px;
             }
+
             .display-card {
                 padding: 30px 20px;
                 border-radius: 24px;
             }
+
             .status-badge {
                 top: 20px;
                 right: 20px;
                 font-size: 12px;
                 padding: 6px 12px;
             }
+
             .logo-img {
                 width: 200px;
             }
+
             h2 {
                 padding: 12px 30px;
             }
+
             .clock-time {
                 font-size: 24px;
             }
@@ -321,14 +324,14 @@
             source.buffer = buffer;
             source.connect(audioCtx.destination);
             source.start(0);
-            
+
             playDing();
         });
 
         function playDing() {
             if (!audioCtx) return;
             if (audioCtx.state === 'suspended') audioCtx.resume();
-            
+
             const now = audioCtx.currentTime;
             function playNote(freq, startTime, duration) {
                 const osc = audioCtx.createOscillator();
@@ -382,7 +385,7 @@
             try {
                 const response = await fetch(`${apiBase}/screen-data`);
                 if (!response.ok) return;
-                
+
                 const latest = await response.json();
 
                 if (!latest) {
