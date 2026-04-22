@@ -193,12 +193,12 @@
             font-size: clamp(28px, 5vw, 64px);
             font-weight: 900;
             color: #ffffff;
-            background: #0ea5e9;
             padding: 12px 40px;
             border-radius: 80px;
-            box-shadow: 0 20px 40px rgba(14, 165, 233, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             display: inline-block;
             letter-spacing: 1px;
+            transition: all 0.3s ease;
         }
 
         @media screen and (max-width: 768px) {
@@ -340,8 +340,7 @@
         .waiting-card-room {
             font-size: 13px;
             font-weight: 700;
-            color: #0ea5e9;
-            background: #f0f9ff;
+            color: #ffffff;
             padding: 4px 10px;
             border-radius: 10px;
             align-self: flex-start;
@@ -525,6 +524,16 @@
             return div.innerHTML;
         }
 
+        function getRoomColor(room) {
+            if (!room) return '#64748b'; // Default gray
+            
+            const r = room.toLowerCase();
+            if (r.includes('clinic 1')) return '#0ea5e9'; // Sky Blue
+            if (r.includes('clinic 2')) return '#8b5cf6'; // Violet
+            if (r.includes('vital room')) return '#f43f5e'; // Rose/Red
+            return '#64748b'; // Others (including Manual)
+        }
+
         // Render screen from data (called only when data changes)
         function renderScreenData(data) {
             const display = document.getElementById('mainDisplay');
@@ -559,7 +568,7 @@
                 </div>
                 <h1>${formatAndMaskName(latest.firstName, latest.lastName)}</h1>
                 <h3>${latest.note ? escapeHtml(latest.note) : ''}</h3>
-                <h2>${escapeHtml(latest.room)}</h2>
+                <h2 style="background-color: ${getRoomColor(latest.room)}">${escapeHtml(latest.room)}</h2>
             `;
 
             // Render waiting list
@@ -571,7 +580,7 @@
                     card.className = 'waiting-card';
                     card.innerHTML = `
                         <div class="waiting-card-name">${formatAndMaskName(item.firstName, item.lastName)}</div>
-                        <div class="waiting-card-room">${escapeHtml(item.room)}</div>
+                        <div class="waiting-card-room" style="background-color: ${getRoomColor(item.room)}">${escapeHtml(item.room)}</div>
                         ${item.note ? `<div class="waiting-card-note">${escapeHtml(item.note)}</div>` : ''}
                     `;
                     waitingListContainer.appendChild(card);
