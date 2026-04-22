@@ -355,22 +355,30 @@
         /* Bottom Control Button */
         .manage-link {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 10px 20px;
-            background: #ffffff;
+            bottom: 15px;
+            right: 15px;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
             border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            color: #94a3b8;
+            border-radius: 50%;
             text-decoration: none;
-            font-size: 13px;
-            transition: all 0.2s;
+            font-size: 20px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 100;
+            opacity: 0.5;
         }
 
         .manage-link:hover {
-            color: #0ea5e9;
+            opacity: 1;
+            transform: rotate(45deg) scale(1.1);
+            background: #ffffff;
             border-color: #0ea5e9;
-            background: #f0f9ff;
+            box-shadow: 0 10px 20px rgba(14, 165, 233, 0.1);
         }
     </style>
 </head>
@@ -402,7 +410,7 @@
         </div>
     </div>
 
-    <a href="manage.html" class="manage-link">Manage</a>
+    <a href="manage.html" class="manage-link" title="Manage Settings">⚙️</a>
 
     <div id="soundOverlay"
         style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; color: white;">
@@ -416,6 +424,39 @@
         let lastVersion = -1;
         let audioCtx = null;
         let eventSource = null;
+        let scrollInterval = null;
+
+        // Auto-scroll for waiting list
+        function startAutoScroll() {
+            const list = document.getElementById('waitingList');
+            if (!list) return;
+
+            // Clear existing interval if any
+            if (scrollInterval) {
+                clearInterval(scrollInterval);
+                scrollInterval = null;
+            }
+
+            // Check if scrolling is needed (waiting items >= 4)
+            // The waiting list items are .waiting-card elements
+            const items = list.getElementsByClassName('waiting-card');
+            if (items.length < 4) return;
+
+            console.log("[Scroll] Starting auto-scroll for " + items.length + " items");
+            
+            scrollInterval = setInterval(() => {
+                const maxScroll = list.scrollHeight - list.clientHeight;
+                if (maxScroll <= 0) return;
+
+                // If we are at the bottom, go back to top
+                if (list.scrollTop >= maxScroll - 10) {
+                    list.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    // Scroll down by roughly one card height + gap
+                    list.scrollBy({ top: 110, behavior: 'smooth' });
+                }
+            }, 2000);
+        }
 
         // Sound activation
         document.getElementById('soundOverlay').addEventListener('click', function () {
@@ -538,6 +579,9 @@
             } else {
                 waitingListContainer.innerHTML = '<div style="color:#94a3b8; font-size: 16px; padding: 20px 0;">No other patients waiting</div>';
             }
+
+            // Trigger auto-scroll check after rendering
+            setTimeout(startAutoScroll, 500);
         }
 
         // ── SSE (Server-Sent Events) ──
