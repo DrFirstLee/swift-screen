@@ -486,13 +486,15 @@
                 const response = await fetch(`${apiBase}/screen-data`);
                 if (!response.ok) return;
 
-                const queue = await response.json();
+                const data = await response.json();
+                const queue = data.queue;
+                const defaultMessage = data.default_message || "Welcome to Swift Medical Clinic";
 
                 if (!queue || queue.length === 0) {
                     display.innerHTML = `
                         <div class="empty-state">
-                            <div class="empty-icon">📋</div>
-                            <div class="empty-text">No patients waiting</div>
+                            <div class="empty-icon">🏥</div>
+                            <div class="empty-text" style="font-weight:700; color:#0ea5e9; text-align:center; max-width:80%; font-size:clamp(24px, 5vw, 48px); line-height:1.4;">${escapeHtml(defaultMessage)}</div>
                         </div>
                     `;
                     waitingListContainer.innerHTML = '<div style="color:#94a3b8; font-size: 16px; padding: 20px 0;">Queue is empty</div>';

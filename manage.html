@@ -544,6 +544,18 @@
             </form>
         </div>
 
+        <!-- Configuration Card -->
+        <div class="input-card" style="margin-top: 24px; padding: 20px 28px;">
+            <div class="card-title" style="margin-bottom: 16px;">Screen Configuration</div>
+            <div class="form-group" style="margin-bottom: 12px;">
+                <label class="form-label" for="defaultMessageInput">Default Message (Shown when queue is empty)</label>
+                <div style="display: flex; gap: 12px;">
+                    <input type="text" class="form-input" id="defaultMessageInput" placeholder="e.g. Welcome to Swift Medical Clinic">
+                    <button class="submit-btn" style="width: auto; padding: 0 24px; font-size: 14px;" onclick="updateConfig()">Save</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Current List -->
         <div class="list-section">
             <div class="list-header">
@@ -570,7 +582,13 @@
                 const response = await fetch(`${apiBase}/screen-data`);
                 if (response.ok) {
                     const data = await response.json();
-                    renderList(data || []);
+                    renderList(data.queue || []);
+                    
+                    // Update default message input if it's currently empty (first load)
+                    const msgInput = document.getElementById('defaultMessageInput');
+                    if (msgInput && !msgInput.value && data.default_message) {
+                        msgInput.value = data.default_message;
+                    }
                 }
             } catch (e) {
                 console.error("Failed to fetch data:", e);
@@ -742,6 +760,25 @@
                 fetchListData();
             }
         }, 3000);
+
+        async function updateConfig() {
+            const msg = document.getElementById('defaultMessageInput').value.trim();
+            if (!msg) return;
+
+            const apiBase = localStorage.getItem('swift_api_base') || "https://swift-medical-api.naranja.my";
+            try {
+                const resp = await fetch(`${apiBase}/screen-config`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ default_message: msg })
+                });
+                if (resp.ok) {
+                    showToast('Configuration updated');
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
 
         // Login Logic
         async function handleLogin() {
