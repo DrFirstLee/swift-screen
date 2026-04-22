@@ -561,13 +561,18 @@
     </div>
 
     <script>
-        // Load data
-        function getData() {
-            return JSON.parse(localStorage.getItem('swiftScreenData') || '[]');
-        }
-
-        function saveData(data) {
-            localStorage.setItem('swiftScreenData', JSON.stringify(data));
+        // Load data from server
+        async function fetchListData() {
+            const apiBase = localStorage.getItem('swift_api_base') || "https://swift-medical-api.naranja.my";
+            try {
+                const response = await fetch(`${apiBase}/screen-data`);
+                if (response.ok) {
+                    const data = await response.json();
+                    renderList(data || []);
+                }
+            } catch (e) {
+                console.error("Failed to fetch data:", e);
+            }
         }
 
         // Room class
@@ -579,8 +584,7 @@
         }
 
         // Render list
-        function renderList() {
-            const data = getData();
+        function renderList(data) {
             const listItems = document.getElementById('listItems');
             const countBadge = document.getElementById('countBadge');
             countBadge.textContent = data.length;
@@ -604,7 +608,7 @@
                         <div class="item-detail">${item.note ? escapeHtml(item.note) : 'No notes'}</div>
                     </div>
                     <span class="item-room ${roomClass}">${escapeHtml(item.room)}</span>
-                    <button class="delete-btn" data-index="${index}" title="Delete">✕</button>
+                    <button class="delete-btn" data-id="${item.id}" title="Delete">✕</button>
                 `;
                 listItems.appendChild(li);
             });
@@ -625,7 +629,7 @@
         }
 
         // Form submit
-        document.getElementById('entryForm').addEventListener('submit', function (e) {
+        document.getElementById('entryForm').addEventListener('submit', async function (e) {
             e.preventDefault();
 
             const firstName = document.getElementById('firstNameInput').value.trim();
@@ -643,59 +647,75 @@
                 timestamp: new Date().toISOString()
             };
 
-            // Push to Server
             const apiBase = localStorage.getItem('swift_api_base') || "https://swift-medical-api.naranja.my";
-            fetch(`${apiBase}/screen-update`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(dataObj)
-            }).then(resp => {
-                if(resp.ok) console.log("Signboard updated on server");
-            }).catch(err => console.error("Server update failed", err));
+            
+            try {
+                const resp = await fetch(`${apiBase}/screen-update`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dataObj)
+                });
+                
+                if(resp.ok) {
+                    await fetchListData();
+                    // Reset form
+                    document.getElementById('firstNameInput').value = '';
+                    document.getElementById('lastNameInput').value = '';
+                    document.getElementById('roomSelect').selectedIndex = 0;
+                    document.getElementById('noteInput').value = '';
+                    document.getElementById('firstNameInput').focus();
 
-            // Legacy local storage (still useful for history list)
-            const data = getData();
-            data.push(dataObj);
-            saveData(data);
-            renderList();
-
-            // Reset form
-            document.getElementById('firstNameInput').value = '';
-            document.getElementById('lastNameInput').value = '';
-            document.getElementById('roomSelect').selectedIndex = 0;
-            document.getElementById('noteInput').value = '';
-            document.getElementById('firstNameInput').focus();
-
-            showToast('Added to dashboard');
+                    showToast('Added to dashboard');
+                }
+            } catch(err) {
+                console.error("Server update failed", err);
+            }
         });
 
         // Delete single item
-        document.getElementById('listItems').addEventListener('click', function (e) {
+        document.getElementById('listItems').addEventListener('click', async function (e) {
             const btn = e.target.closest('.delete-btn');
             if (!btn) return;
 
-            const index = parseInt(btn.dataset.index);
-            const data = getData();
-            data.splice(index, 1);
-            saveData(data);
-            renderList();
-            showToast('Entry deleted');
+            const id = btn.dataset.id;
+            const apiBase = localStorage.getItem('swift_api_base') || "https://swift-medical-api.naranja.my";
+            
+            try {
+                const resp = await fetch(`${apiBase}/screen-delete/${id}`, {
+                    method: 'DELETE'
+                });
+                if(resp.ok) {
+                    await fetchListData();
+                    showToast('Entry deleted');
+                }
+            } catch (err) {
+                console.error(err);
+            }
         });
 
         // Clear all
-        document.getElementById('clearAllBtn').addEventListener('click', function () {
+        document.getElementById('clearAllBtn').addEventListener('click', async function () {
             if (!confirm('Are you sure you want to clear the entire list?')) return;
-            saveData([]);
-            renderList();
-            showToast('All entries cleared');
-        });
-
-        // Listen for storage changes from other tabs
-        window.addEventListener('storage', function (e) {
-            if (e.key === 'swiftScreenData') {
-                renderList();
+            const apiBase = localStorage.getItem('swift_api_base') || "https://swift-medical-api.naranja.my";
+            try {
+                const resp = await fetch(`${apiBase}/screen-clear`, {
+                    method: 'DELETE'
+                });
+                if(resp.ok) {
+                    await fetchListData();
+                    showToast('All entries cleared');
+                }
+            } catch (err) {
+                console.error(err);
             }
         });
+
+        // Poll for updates
+        setInterval(() => {
+            if (document.getElementById('mainApp').style.display !== 'none') {
+                fetchListData();
+            }
+        }, 3000);
 
         // Login Logic
         async function handleLogin() {
@@ -734,7 +754,7 @@
             if (token && token !== "undefined") {
                 loginUI.style.display = 'none';
                 mainUI.style.display = 'flex';
-                renderList();
+                fetchListData();
             } else {
                 loginUI.style.display = 'flex';
                 mainUI.style.display = 'none';

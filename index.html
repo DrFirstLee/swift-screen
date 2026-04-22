@@ -56,15 +56,18 @@
             align-items: center;
         }
 
-        /* Centered Logo Header */
+        /* Top Header Container */
         .header {
-            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             width: 100%;
+            margin-bottom: 20px;
         }
 
         .logo-img {
-            width: 300px;
-            max-width: 90%;
+            width: 250px;
+            max-width: 50%;
             height: auto;
             animation: float 6s ease-in-out infinite;
         }
@@ -93,7 +96,7 @@
 
         /* Main Display Card - Sky Blue Gradient */
         .display-card {
-            flex: 1;
+            height: 60vh;
             width: 100%;
             display: flex;
             flex-direction: column;
@@ -104,7 +107,7 @@
             border-radius: 40px;
             border: 1px solid #bae6fd;
             box-shadow: 0 40px 80px rgba(14, 165, 233, 0.12);
-            padding: 60px;
+            padding: 40px;
             position: relative;
             animation: cardAppear 1s cubic-bezier(0.16, 1, 0.3, 1);
         }
@@ -239,10 +242,9 @@
             letter-spacing: 2px;
         }
 
-        /* Clock at bottom */
-        .footer-clock {
-            margin-top: 40px;
-            text-align: center;
+        /* Header Clock */
+        .header-clock {
+            text-align: right;
         }
 
         .clock-time {
@@ -250,13 +252,92 @@
             font-size: 32px;
             font-weight: 700;
             color: #0369a1;
-            letter-spacing: 4px;
+            letter-spacing: 2px;
         }
 
         .clock-date {
             font-size: 16px;
             color: #94a3b8;
             margin-top: 5px;
+        }
+
+        /* Waiting List */
+        .waiting-list-container {
+            width: 100%;
+            margin-top: 25px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .waiting-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0ea5e9;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid #e0f2fe;
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .waiting-list {
+            display: flex;
+            overflow-x: auto;
+            gap: 20px;
+            padding-bottom: 10px;
+        }
+
+        .waiting-list::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .waiting-list::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+
+        .waiting-list::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .waiting-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 20px;
+            min-width: 220px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            animation: cardAppear 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .waiting-card-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .waiting-card-room {
+            font-size: 13px;
+            font-weight: 700;
+            color: #0ea5e9;
+            background: #f0f9ff;
+            padding: 4px 10px;
+            border-radius: 10px;
+            align-self: flex-start;
+        }
+
+        .waiting-card-note {
+            font-size: 13px;
+            color: #64748b;
         }
 
         /* Bottom Control Button */
@@ -284,20 +365,26 @@
 
 <body>
     <div class="container">
-        <!-- Center Logo Header -->
+        <!-- Top Header: Logo + Clock -->
         <header class="header">
             <img src="logo-wide.png" alt="Swift Logo" class="logo-img">
+            <div class="header-clock">
+                <div class="clock-time" id="clock">00:00:00</div>
+                <div class="clock-date" id="dateDisplay"></div>
+            </div>
         </header>
 
-        <!-- Main Display Card -->
+        <!-- Main Display Card (Now Calling) -->
         <div class="display-card" id="mainDisplay">
             <!-- Content will be injected by JS -->
         </div>
 
-        <!-- Clock Footer -->
-        <div class="footer-clock">
-            <div class="clock-time" id="clock">00:00:00</div>
-            <div class="clock-date" id="dateDisplay"></div>
+        <!-- Waiting List -->
+        <div class="waiting-list-container">
+            <div class="waiting-title">Waiting List</div>
+            <div class="waiting-list" id="waitingList">
+                <!-- Content will be injected by JS -->
+            </div>
         </div>
     </div>
 
@@ -380,24 +467,28 @@
         // Fetch and Render Display
         async function fetchScreenData() {
             const display = document.getElementById('mainDisplay');
+            const waitingListContainer = document.getElementById('waitingList');
             const apiBase = "https://swift-medical-api.naranja.my";
 
             try {
                 const response = await fetch(`${apiBase}/screen-data`);
                 if (!response.ok) return;
 
-                const latest = await response.json();
+                const queue = await response.json();
 
-                if (!latest) {
+                if (!queue || queue.length === 0) {
                     display.innerHTML = `
                         <div class="empty-state">
                             <div class="empty-icon">📋</div>
                             <div class="empty-text">No patients waiting</div>
                         </div>
                     `;
+                    waitingListContainer.innerHTML = '<div style="color:#94a3b8; font-size: 16px; padding: 20px 0;">Queue is empty</div>';
                     lastTimestamp = null;
                     return;
                 }
+
+                const latest = queue[0];
 
                 // Check for update by timestamp
                 if (latest.timestamp && latest.timestamp !== lastTimestamp) {
@@ -405,17 +496,36 @@
                         playDing();
                     }
                     lastTimestamp = latest.timestamp;
-
-                    display.innerHTML = `
-                        <div class="status-badge">
-                            <div class="status-dot"></div>
-                            Now Calling
-                        </div>
-                        <h1>${formatAndMaskName(latest.firstName, latest.lastName)}</h1>
-                        <h3>${latest.note ? escapeHtml(latest.note) : '—'}</h3>
-                        <h2>${escapeHtml(latest.room)}</h2>
-                    `;
                 }
+
+                display.innerHTML = `
+                    <div class="status-badge">
+                        <div class="status-dot"></div>
+                        Now Calling
+                    </div>
+                    <h1>${formatAndMaskName(latest.firstName, latest.lastName)}</h1>
+                    <h3>${latest.note ? escapeHtml(latest.note) : '—'}</h3>
+                    <h2>${escapeHtml(latest.room)}</h2>
+                `;
+                
+                // Render waiting list
+                waitingListContainer.innerHTML = '';
+                if (queue.length > 1) {
+                    for (let i = 1; i < queue.length; i++) {
+                        const item = queue[i];
+                        const card = document.createElement('div');
+                        card.className = 'waiting-card';
+                        card.innerHTML = `
+                            <div class="waiting-card-name">${formatAndMaskName(item.firstName, item.lastName)}</div>
+                            <div class="waiting-card-room">${escapeHtml(item.room)}</div>
+                            ${item.note ? `<div class="waiting-card-note">${escapeHtml(item.note)}</div>` : ''}
+                        `;
+                        waitingListContainer.appendChild(card);
+                    }
+                } else {
+                    waitingListContainer.innerHTML = '<div style="color:#94a3b8; font-size: 16px; padding: 20px 0;">No other patients waiting</div>';
+                }
+
             } catch (err) {
                 console.error("Failed to fetch screen data:", err);
             }
