@@ -527,12 +527,14 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="roomSelect">Location</label>
-                    <select class="form-select" id="roomSelect" required>
+                    <select class="form-select" id="roomSelect" required onchange="toggleManualRoom()">
                         <option value="" disabled selected>Select a location</option>
-                        <option value="Waiting Room 1">🏥 Waiting Room 1</option>
-                        <option value="Waiting Room 2">🏥 Waiting Room 2</option>
-                        <option value="Vital Signs Room">💉 Vital Signs Room</option>
+                        <option value="Clinic 1">🏥 Clinic 1</option>
+                        <option value="Clinic 2">🏥 Clinic 2</option>
+                        <option value="Vital Room">💉 Vital Room</option>
+                        <option value="Manual">📝 Manual Input</option>
                     </select>
+                    <input type="text" class="form-input" id="manualRoomInput" placeholder="Enter location name" style="display: none; margin-top: 10px;">
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="noteInput">Notes</label>
@@ -577,10 +579,21 @@
 
         // Room class
         function getRoomClass(room) {
-            if (room === 'Waiting Room 1') return 'room1';
-            if (room === 'Waiting Room 2') return 'room2';
-            if (room === 'Vital Signs Room') return 'vital';
+            if (room === 'Clinic 1') return 'room1';
+            if (room === 'Clinic 2') return 'room2';
+            if (room === 'Vital Room') return 'vital';
             return 'room1';
+        }
+
+        function toggleManualRoom() {
+            const select = document.getElementById('roomSelect');
+            const input = document.getElementById('manualRoomInput');
+            if (select.value === 'Manual') {
+                input.style.display = 'block';
+                input.focus();
+            } else {
+                input.style.display = 'none';
+            }
         }
 
         // Render list
@@ -634,7 +647,18 @@
 
             const firstName = document.getElementById('firstNameInput').value.trim();
             const lastName = document.getElementById('lastNameInput').value.trim();
-            const room = document.getElementById('roomSelect').value;
+            const roomSelect = document.getElementById('roomSelect');
+            const manualRoomInput = document.getElementById('manualRoomInput');
+            let room = roomSelect.value;
+            
+            if (room === 'Manual') {
+                room = manualRoomInput.value.trim();
+                if (!room) {
+                    alert('Please enter a location name');
+                    return;
+                }
+            }
+            
             const note = document.getElementById('noteInput').value.trim();
 
             if (!firstName || !lastName || !room) return;
@@ -661,7 +685,9 @@
                     // Reset form
                     document.getElementById('firstNameInput').value = '';
                     document.getElementById('lastNameInput').value = '';
-                    document.getElementById('roomSelect').selectedIndex = 0;
+                    roomSelect.selectedIndex = 0;
+                    manualRoomInput.style.display = 'none';
+                    manualRoomInput.value = '';
                     document.getElementById('noteInput').value = '';
                     document.getElementById('firstNameInput').focus();
 
