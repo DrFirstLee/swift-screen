@@ -544,17 +544,7 @@
             </form>
         </div>
 
-        <!-- Configuration Card -->
-        <div class="input-card" style="margin-top: 24px; padding: 20px 28px;">
-            <div class="card-title" style="margin-bottom: 16px;">Screen Configuration</div>
-            <div class="form-group" style="margin-bottom: 12px;">
-                <label class="form-label" for="defaultMessageInput">Default Message (Shown when queue is empty)</label>
-                <div style="display: flex; gap: 12px;">
-                    <input type="text" class="form-input" id="defaultMessageInput" placeholder="e.g. Welcome to Swift Medical Clinic">
-                    <button class="submit-btn" style="width: auto; padding: 0 24px; font-size: 14px;" onclick="updateConfig()">Save</button>
-                </div>
-            </div>
-        </div>
+
 
         <!-- Current List -->
         <div class="list-section">
@@ -564,6 +554,18 @@
             </div>
             <div class="list-items" id="listItems">
                 <!-- Dynamic items -->
+            </div>
+        </div>
+
+        <!-- Configuration Card (Moved below waitlist) -->
+        <div class="input-card" style="margin-top: 24px; padding: 20px 28px; margin-bottom: 40px;">
+            <div class="card-title" style="margin-bottom: 16px;">Screen Configuration</div>
+            <div class="form-group" style="margin-bottom: 12px;">
+                <label class="form-label" for="defaultMessageInput">Default Message (Shown when queue is empty)</label>
+                <div style="display: flex; gap: 12px;">
+                    <input type="text" class="form-input" id="defaultMessageInput" placeholder="e.g. Welcome to Swift Medical Clinic">
+                    <button class="submit-btn" style="width: auto; padding: 0 24px; font-size: 14px;" onclick="updateConfig()">Save</button>
+                </div>
             </div>
         </div>
     </div>

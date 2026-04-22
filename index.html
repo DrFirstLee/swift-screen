@@ -505,9 +505,7 @@
 
             // Check for new patient to play ding
             if (latest.timestamp && latest.timestamp !== lastTimestamp) {
-                if (lastTimestamp !== null) {
-                    playDing();
-                }
+                playDing();
                 lastTimestamp = latest.timestamp;
             }
 
