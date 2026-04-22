@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Swift Screen - Manage</title>
-    <meta name="description" content="Swift Screen Dashboard Management Page">
+    <meta name="description" content="Swift Screen Management Page">
     <link
         href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&family=Orbitron:wght@400;500;600;700;900&display=swap"
         rel="stylesheet">
@@ -324,6 +324,32 @@
             transform: scale(1.005);
         }
 
+        .list-item.dragging {
+            opacity: 0.5;
+            background: #e0f2fe;
+            border: 2px dashed #0ea5e9;
+            transform: scale(0.98);
+        }
+
+        .list-item.drag-over {
+            border-top: 3px solid #0ea5e9;
+            background: #f0f9ff;
+        }
+
+        .drag-handle {
+            cursor: grab;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            padding-right: 4px;
+        }
+
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+
         .item-num {
             font-family: 'Orbitron', monospace;
             font-size: 12px;
@@ -489,7 +515,9 @@
             </div>
             <p id="loginError"></p>
             <button class="login-btn" onclick="handleLogin()">Sign In</button>
-            <a href="index.html" style="display: block; margin-top: 20px; color: #64748b; text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s;" onmouseover="this.style.color='#0ea5e9'" onmouseout="this.style.color='#64748b'">← Return to Dashboard</a>
+            <a href="index.html"
+                style="display: block; margin-top: 20px; color: #64748b; text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s;"
+                onmouseover="this.style.color='#0ea5e9'" onmouseout="this.style.color='#64748b'">← Return to Screen</a>
         </div>
     </div>
 
@@ -500,11 +528,12 @@
             <div class="header-left">
                 <a href="index.html" class="back-btn" id="backBtn">←</a>
                 <div style="display: flex; align-items: center; gap: 12px;">
-                    <a href="index.html" class="clear-all-btn" style="background: #f0f9ff; border-color: #bae6fd; color: #0ea5e9; text-decoration: none;">Dashboard</a>
+                    <a href="index.html" class="clear-all-btn"
+                        style="background: #f0f9ff; border-color: #bae6fd; color: #0ea5e9; text-decoration: none;">Screen</a>
                     <button onclick="handleLogout()" class="clear-all-btn"
                         style="background: #f1f5f9; border-color: #e2e8f0; color: #64748b;">Logout</button>
                     <div class="page-title">MANAGE</div>
-                    <div class="page-subtitle">Dashboard Data Management</div>
+                    <div class="page-subtitle">Screen Data Management</div>
                 </div>
             </div>
         </header>
@@ -534,13 +563,14 @@
                         <option value="Vital Room">💉 Vital Room</option>
                         <option value="Manual">📝 Manual Input</option>
                     </select>
-                    <input type="text" class="form-input" id="manualRoomInput" placeholder="Enter location name" style="display: none; margin-top: 10px;">
+                    <input type="text" class="form-input" id="manualRoomInput" placeholder="Enter location name"
+                        style="display: none; margin-top: 10px;">
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="noteInput">Notes</label>
                     <textarea class="form-textarea" id="noteInput" placeholder="Enter notes (optional)"></textarea>
                 </div>
-                <button type="submit" class="submit-btn" id="submitBtn">Add to Dashboard</button>
+                <button type="submit" class="submit-btn" id="submitBtn">Add to Screen</button>
             </form>
         </div>
 
@@ -563,8 +593,10 @@
             <div class="form-group" style="margin-bottom: 12px;">
                 <label class="form-label" for="defaultMessageInput">Default Message (Shown when queue is empty)</label>
                 <div style="display: flex; gap: 12px;">
-                    <input type="text" class="form-input" id="defaultMessageInput" placeholder="e.g. Welcome to Swift Medical Clinic">
-                    <button class="submit-btn" style="width: auto; padding: 0 24px; font-size: 14px;" onclick="updateConfig()">Save</button>
+                    <input type="text" class="form-input" id="defaultMessageInput"
+                        placeholder="e.g. Welcome to Swift Medical Clinic">
+                    <button class="submit-btn" style="width: auto; padding: 0 24px; font-size: 14px;"
+                        onclick="updateConfig()">Save</button>
                 </div>
             </div>
         </div>
@@ -573,7 +605,7 @@
     <!-- Toast -->
     <div class="toast" id="toast">
         <span>✅</span>
-        <span id="toastMessage">Added to dashboard</span>
+        <span id="toastMessage">Added to Screen</span>
     </div>
 
     <script>
@@ -587,13 +619,13 @@
                 if (response.ok) {
                     const data = await response.json();
                     const serverVersion = data.version || 0;
-                    
+
                     // Only re-render if data actually changed
                     if (serverVersion !== lastManageVersion || forceRender) {
                         lastManageVersion = serverVersion;
                         renderList(data.queue || []);
                     }
-                    
+
                     // Update default message input if it's currently empty (first load)
                     const msgInput = document.getElementById('defaultMessageInput');
                     if (msgInput && !msgInput.value && data.default_message) {
@@ -639,10 +671,13 @@
             data.forEach((item, index) => {
                 const li = document.createElement('div');
                 li.className = 'list-item';
+                li.draggable = true;
+                li.dataset.id = item.id;
 
                 const roomClass = getRoomClass(item.room);
 
                 li.innerHTML = `
+                    <div class="drag-handle">☰</div>
                     <div class="item-num">${String(index + 1).padStart(2, '0')}</div>
                     <div class="item-info">
                         <div class="item-name">${escapeHtml(item.firstName)} ${escapeHtml(item.lastName)}</div>
@@ -651,8 +686,92 @@
                     <span class="item-room ${roomClass}">${escapeHtml(item.room)}</span>
                     <button class="delete-btn" data-id="${item.id}" title="Delete">✕</button>
                 `;
+
+                // Drag and Drop Events
+                li.addEventListener('dragstart', handleDragStart);
+                li.addEventListener('dragover', handleDragOver);
+                li.addEventListener('dragleave', handleDragLeave);
+                li.addEventListener('drop', handleDrop);
+                li.addEventListener('dragend', handleDragEnd);
+
                 listItems.appendChild(li);
             });
+        }
+
+        let dragSrcEl = null;
+
+        function handleDragStart(e) {
+            this.classList.add('dragging');
+            dragSrcEl = this;
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.innerHTML);
+        }
+
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            this.classList.add('drag-over');
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('drag-over');
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+            const items = document.querySelectorAll('.list-item');
+            items.forEach(item => item.classList.remove('drag-over'));
+        }
+
+        async function handleDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+
+            if (dragSrcEl !== this) {
+                // Reorder in DOM
+                const list = document.getElementById('listItems');
+                const items = Array.from(list.children);
+                const fromIndex = items.indexOf(dragSrcEl);
+                const toIndex = items.indexOf(this);
+
+                if (fromIndex < toIndex) {
+                    this.after(dragSrcEl);
+                } else {
+                    this.before(dragSrcEl);
+                }
+
+                // Sync with server
+                await saveNewOrder();
+            }
+
+            return false;
+        }
+
+        async function saveNewOrder() {
+            const list = document.getElementById('listItems');
+            const items = Array.from(list.querySelectorAll('.list-item'));
+            const newIds = items.map(item => item.dataset.id);
+
+            const apiBase = localStorage.getItem('swift_api_base') || "https://swift-medical-api.naranja.my";
+            try {
+                const resp = await fetch(`${apiBase}/screen-reorder`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ids: newIds })
+                });
+                
+                if (resp.ok) {
+                    showToast('Order updated');
+                    // Refresh data to update numbers and ensure sync
+                    await fetchListData(true);
+                }
+            } catch (err) {
+                console.error("Failed to reorder:", err);
+            }
         }
 
         function escapeHtml(text) {
@@ -678,7 +797,7 @@
             const roomSelect = document.getElementById('roomSelect');
             const manualRoomInput = document.getElementById('manualRoomInput');
             let room = roomSelect.value;
-            
+
             if (room === 'Manual') {
                 room = manualRoomInput.value.trim();
                 if (!room) {
@@ -686,7 +805,7 @@
                     return;
                 }
             }
-            
+
             const note = document.getElementById('noteInput').value.trim();
 
             if (!firstName || !lastName || !room) return;
@@ -700,15 +819,15 @@
             };
 
             const apiBase = localStorage.getItem('swift_api_base') || "https://swift-medical-api.naranja.my";
-            
+
             try {
                 const resp = await fetch(`${apiBase}/screen-update`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(dataObj)
                 });
-                
-                if(resp.ok) {
+
+                if (resp.ok) {
                     await fetchListData();
                     // Reset form
                     document.getElementById('firstNameInput').value = '';
@@ -719,9 +838,9 @@
                     document.getElementById('noteInput').value = '';
                     document.getElementById('firstNameInput').focus();
 
-                    showToast('Added to dashboard');
+                    showToast('Added to screen');
                 }
-            } catch(err) {
+            } catch (err) {
                 console.error("Server update failed", err);
             }
         });
@@ -733,12 +852,12 @@
 
             const id = btn.dataset.id;
             const apiBase = localStorage.getItem('swift_api_base') || "https://swift-medical-api.naranja.my";
-            
+
             try {
                 const resp = await fetch(`${apiBase}/screen-delete/${id}`, {
                     method: 'DELETE'
                 });
-                if(resp.ok) {
+                if (resp.ok) {
                     await fetchListData();
                     showToast('Entry deleted');
                 }
@@ -755,7 +874,7 @@
                 const resp = await fetch(`${apiBase}/screen-clear`, {
                     method: 'DELETE'
                 });
-                if(resp.ok) {
+                if (resp.ok) {
                     await fetchListData();
                     showToast('All entries cleared');
                 }
