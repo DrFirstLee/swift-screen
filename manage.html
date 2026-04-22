@@ -575,14 +575,22 @@
     </div>
 
     <script>
+        let lastManageVersion = -1;
+
         // Load data from server
-        async function fetchListData() {
+        async function fetchListData(forceRender) {
             const apiBase = localStorage.getItem('swift_api_base') || "https://swift-medical-api.naranja.my";
             try {
                 const response = await fetch(`${apiBase}/screen-data`);
                 if (response.ok) {
                     const data = await response.json();
-                    renderList(data.queue || []);
+                    const serverVersion = data.version || 0;
+                    
+                    // Only re-render if data actually changed
+                    if (serverVersion !== lastManageVersion || forceRender) {
+                        lastManageVersion = serverVersion;
+                        renderList(data.queue || []);
+                    }
                     
                     // Update default message input if it's currently empty (first load)
                     const msgInput = document.getElementById('defaultMessageInput');
