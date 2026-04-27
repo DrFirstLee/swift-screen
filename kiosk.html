@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Swift Medical - Self Check-in Kiosk</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+        color: #1e293b;
+        font-family: 'Noto Sans KR', sans-serif;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+    
+    /* Background Pattern */
+    body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background-image: radial-gradient(rgba(14, 165, 233, 0.1) 2px, transparent 2px);
+        background-size: 40px 40px;
+        z-index: 0;
+    }
+
+    .kiosk-container {
+        position: relative;
+        z-index: 1;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        width: 100%;
+        max-width: 700px;
+        border-radius: 40px;
+        padding: 60px;
+        box-shadow: 0 30px 60px rgba(14, 165, 233, 0.15), 
+                    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+        text-align: center;
+        animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(40px) scale(0.98); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .logo-area { margin-bottom: 40px; }
+    .logo-text {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 42px;
+        font-weight: 700;
+        background: linear-gradient(135deg, #0ea5e9, #0284c7);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: 2px;
+    }
+    .subtitle {
+        font-size: 20px;
+        color: #64748b;
+        margin-top: 8px;
+        font-weight: 500;
+    }
+
+    /* Form Fields */
+    .form-group {
+        text-align: left;
+        margin-bottom: 30px;
+    }
+    .form-label {
+        display: block;
+        font-size: 18px;
+        font-weight: 700;
+        color: #334155;
+        margin-bottom: 12px;
+        margin-left: 8px;
+    }
+    .input-row {
+        display: flex;
+        gap: 20px;
+    }
+    .input-box {
+        flex: 1;
+    }
+    .form-input {
+        width: 100%;
+        background: #ffffff;
+        border: 2px solid #e2e8f0;
+        border-radius: 20px;
+        padding: 22px 24px;
+        font-size: 24px;
+        font-weight: 600;
+        color: #0f172a;
+        transition: all 0.3s ease;
+        outline: none;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    }
+    .form-input:focus {
+        border-color: #0ea5e9;
+        box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15), inset 0 2px 4px rgba(0,0,0,0.02);
+    }
+    .form-input::placeholder { color: #cbd5e1; font-weight: 500; }
+
+    /* Custom Radio Buttons for Type */
+    .type-selector {
+        display: flex;
+        gap: 20px;
+    }
+    .type-option {
+        flex: 1;
+        position: relative;
+    }
+    .type-option input[type="radio"] {
+        display: none;
+    }
+    .type-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #f8fafc;
+        border: 2px solid #e2e8f0;
+        border-radius: 24px;
+        padding: 30px 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .type-card .icon { font-size: 40px; margin-bottom: 12px; }
+    .type-card .title { font-size: 22px; font-weight: 700; color: #475569; }
+    
+    .type-option input[type="radio"]:checked + .type-card {
+        background: #f0f9ff;
+        border-color: #0ea5e9;
+        box-shadow: 0 10px 25px rgba(14, 165, 233, 0.15);
+    }
+    .type-option input[type="radio"]:checked + .type-card .title {
+        color: #0284c7;
+    }
+
+    /* Submit Button */
+    .submit-btn {
+        width: 100%;
+        background: linear-gradient(135deg, #0ea5e9, #0284c7);
+        color: #ffffff;
+        border: none;
+        border-radius: 24px;
+        padding: 24px;
+        font-size: 26px;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 15px 35px rgba(14, 165, 233, 0.3);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        margin-top: 20px;
+    }
+    .submit-btn:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 40px rgba(14, 165, 233, 0.4);
+    }
+    .submit-btn:active {
+        transform: translateY(2px);
+    }
+
+    /* Success Overlay */
+    #successOverlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 40px;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        animation: fadeIn 0.4s ease;
+    }
+    @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+    
+    .success-icon {
+        width: 100px;
+        height: 100px;
+        background: #10b981;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 50px;
+        margin-bottom: 24px;
+        animation: popIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        transform: scale(0);
+    }
+    @keyframes popIn { 
+        0% { transform: scale(0); } 
+        70% { transform: scale(1.1); } 
+        100% { transform: scale(1); } 
+    }
+    .success-text {
+        font-size: 32px;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 12px;
+    }
+    .success-sub {
+        font-size: 20px;
+        color: #64748b;
+        font-weight: 500;
+    }
+
+</style>
+</head>
+<body>
+
+<div class="kiosk-container">
+    
+    <div id="successOverlay">
+        <div class="success-icon">✓</div>
+        <div class="success-text">Check-in Complete!</div>
+        <div class="success-sub">Please wait in the seating area.</div>
+    </div>
+
+    <div class="logo-area">
+        <div class="logo-text">SWIFT MEDICAL</div>
+        <div class="subtitle">Welcome! Please enter your details.</div>
+    </div>
+
+    <div class="form-group">
+        <label class="form-label">Your Name</label>
+        <div class="input-row">
+            <div class="input-box">
+                <input type="text" id="kioskFirst" class="form-input" placeholder="First Name" autocomplete="off">
+            </div>
+            <div class="input-box">
+                <input type="text" id="kioskLast" class="form-input" placeholder="Last Name" autocomplete="off">
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="form-label">Visit Type</label>
+        <div class="type-selector">
+            <label class="type-option">
+                <input type="radio" name="visitType" value="reservation">
+                <div class="type-card">
+                    <div class="icon">📅</div>
+                    <div class="title">Reservation</div>
+                </div>
+            </label>
+            <label class="type-option">
+                <input type="radio" name="visitType" value="walkin" checked>
+                <div class="type-card">
+                    <div class="icon">🚶</div>
+                    <div class="title">Walk-in</div>
+                </div>
+            </label>
+        </div>
+    </div>
+
+    <button class="submit-btn" onclick="submitCheckin()" id="submitBtn">Check In</button>
+
+</div>
+
+<script>
+    const API_BASE = "https://swift-medical-api.naranja.my";
+
+    async function submitCheckin() {
+        const btn = document.getElementById('submitBtn');
+        const firstInput = document.getElementById('kioskFirst');
+        const lastInput = document.getElementById('kioskLast');
+        
+        const firstName = firstInput.value.trim();
+        const lastName = lastInput.value.trim();
+        const type = document.querySelector('input[name="visitType"]:checked').value;
+
+        if (!firstName || !lastName) {
+            alert("Please enter both your First Name and Last Name.");
+            if (!firstName) firstInput.focus();
+            else lastInput.focus();
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = "Processing...";
+        btn.style.opacity = "0.7";
+
+        const payload = {
+            firstName: firstName,
+            lastName: lastName,
+            type: type,
+            internalNote: "Kiosk Check-in",
+            externalNote: "",
+            doctor: "",
+            room: ""
+        };
+
+        try {
+            const response = await fetch(`${API_BASE}/screen-add-patient`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (response.ok) {
+                showSuccess();
+            } else {
+                alert("Failed to connect to the server. Please ask the front desk.");
+                btn.disabled = false;
+                btn.innerHTML = "Check In";
+                btn.style.opacity = "1";
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Network error. Please try again.");
+            btn.disabled = false;
+            btn.innerHTML = "Check In";
+            btn.style.opacity = "1";
+        }
+    }
+
+    function showSuccess() {
+        const overlay = document.getElementById('successOverlay');
+        overlay.style.display = 'flex';
+        
+        // Reset form for next patient
+        document.getElementById('kioskFirst').value = '';
+        document.getElementById('kioskLast').value = '';
+        document.querySelector('input[value="walkin"]').checked = true;
+        
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = false;
+        btn.innerHTML = "Check In";
+        btn.style.opacity = "1";
+
+        // Hide overlay after 4 seconds
+        setTimeout(() => {
+            overlay.style.animation = 'fadeIn 0.4s ease reverse forwards';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                overlay.style.animation = 'fadeIn 0.4s ease';
+            }, 400);
+        }, 4000);
+    }
+</script>
+
+</body>
+</html>
