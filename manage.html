@@ -1,974 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Swift Screen - Manage</title>
-    <meta name="description" content="Swift Screen Management Page">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&family=Orbitron:wght@400;500;600;700;900&display=swap"
-        rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background: #f8fbff;
-            color: #1e293b;
-            font-family: 'Noto Sans KR', sans-serif;
-            min-height: 100vh;
-            position: relative;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image:
-                linear-gradient(rgba(135, 206, 235, 0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(135, 206, 235, 0.1) 1px, transparent 1px);
-            background-size: 60px 60px;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .container {
-            position: relative;
-            z-index: 1;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px 24px;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Header */
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 0 24px;
-            border-bottom: 2px solid #e0f2fe;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .back-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            background: #f0f9ff;
-            border: 1px solid #bae6fd;
-            color: #0ea5e9;
-            font-size: 20px;
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
-
-        .back-btn:hover {
-            background: #0ea5e9;
-            color: #ffffff;
-            border-color: #0ea5e9;
-            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.15);
-        }
-
-        .page-title {
-            font-family: 'Orbitron', monospace;
-            font-size: 20px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #0ea5e9, #0284c7);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: 2px;
-        }
-
-        .page-subtitle {
-            font-size: 12px;
-            color: #64748b;
-            font-weight: 400;
-            margin-top: 2px;
-        }
-
-        /* Input card */
-        .input-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 28px;
-            margin-top: 24px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
-        }
-
-        .card-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: #0ea5e9;
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .card-title::before {
-            content: '';
-            width: 3px;
-            height: 18px;
-            background: linear-gradient(180deg, #7dd3fc, #0ea5e9);
-            border-radius: 2px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: #475569;
-            margin-bottom: 8px;
-            letter-spacing: 0.5px;
-        }
-
-        .form-input,
-        .form-select,
-        .form-textarea {
-            width: 100%;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 14px 16px;
-            font-size: 16px;
-            font-family: 'Noto Sans KR', sans-serif;
-            color: #1e293b;
-            transition: all 0.2s ease;
-            outline: none;
-        }
-
-        .form-input:focus,
-        .form-select:focus,
-        .form-textarea:focus {
-            background: #ffffff;
-            border-color: #0ea5e9;
-            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
-        }
-
-        .form-input::placeholder,
-        .form-textarea::placeholder {
-            color: #94a3b8;
-        }
-
-        .form-select {
-            appearance: none;
-            cursor: pointer;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%230ea5e9' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 16px center;
-            padding-right: 40px;
-        }
-
-        .submit-btn {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #0ea5e9, #0284c7);
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 700;
-            color: #fff;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-family: 'Noto Sans KR', sans-serif;
-            letter-spacing: 1px;
-        }
-
-        .submit-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 8px 20px rgba(14, 165, 233, 0.25);
-        }
-
-        /* Success toast */
-        .toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 14px 24px;
-            background: #ffffff;
-            border: 1px solid #10b981;
-            border-radius: 12px;
-            color: #059669;
-            font-size: 14px;
-            font-weight: 600;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-            transform: translateX(120%);
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .toast.show {
-            transform: translateX(0);
-        }
-
-        /* List section */
-        .list-section {
-            margin-top: 32px;
-            flex: 1;
-        }
-
-        .list-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 16px;
-        }
-
-        .list-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: #0ea5e9;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .list-title::before {
-            content: '';
-            width: 3px;
-            height: 18px;
-            background: linear-gradient(180deg, #7dd3fc, #0ea5e9);
-            border-radius: 2px;
-        }
-
-        .count-badge {
-            background: #f0f9ff;
-            color: #0ea5e9;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            border: 1px solid #bae6fd;
-        }
-
-        .clear-all-btn {
-            background: #fff1f2;
-            border: 1px solid #fecdd3;
-            color: #e11d48;
-            padding: 6px 14px;
-            border-radius: 8px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-family: 'Noto Sans KR', sans-serif;
-        }
-
-        .clear-all-btn:hover {
-            background: #e11d48;
-            color: #ffffff;
-            border-color: #e11d48;
-        }
-
-        .list-items {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            padding-bottom: 40px;
-        }
-
-        .list-item {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
-            padding: 14px 20px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            animation: slideIn 0.3s ease-out forwards;
-            position: relative;
-        }
-
-        .list-item:hover {
-            border-color: #0ea5e9;
-            box-shadow: 0 10px 30px rgba(14, 165, 233, 0.08);
-            transform: translateY(-2px);
-        }
-
-        .list-item.dragging {
-            opacity: 0.5;
-            background: #f0f9ff;
-            border: 2px dashed #0ea5e9;
-            transform: scale(0.98);
-        }
-
-        .list-item.drag-over {
-            border-top: 3px solid #0ea5e9;
-            background: #f8fafc;
-        }
-
-        .drag-handle {
-            cursor: grab;
-            color: #cbd5e1;
-            font-size: 18px;
-            padding: 4px;
-            transition: color 0.2s;
-            user-select: none;
-        }
-
-        .drag-handle:hover {
-            color: #0ea5e9;
-        }
-
-        .item-num {
-            font-family: 'Orbitron', monospace;
-            font-size: 11px;
-            font-weight: 700;
-            color: #94a3b8;
-            background: #f8fafc;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px;
-            flex-shrink: 0;
-        }
-
-        .item-info {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            min-width: 0;
-        }
-
-        .item-name {
-            font-size: 16px;
-            font-weight: 700;
-            color: #1e293b;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .item-detail {
-            font-size: 12px;
-            color: #64748b;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .item-room {
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-
-        .item-room.room1 {
-            background: #f0f9ff;
-            color: #0ea5e9;
-            border: 1px solid #bae6fd;
-        }
-
-        .item-room.room2 {
-            background: #f5f3ff;
-            color: #8b5cf6;
-            border: 1px solid #ddd6fe;
-        }
-
-        .item-room.vital {
-            background: #f0fdf4;
-            color: #10b981;
-            border: 1px solid #bbf7d0;
-        }
-
-        .delete-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            background: #ffffff;
-            border: 1px solid #f1f5f9;
-            color: #94a3b8;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            transition: all 0.2s ease;
-            flex-shrink: 0;
-        }
-
-        .delete-btn:hover {
-            background: #fff1f2;
-            color: #e11d48;
-            border-color: #fecdd3;
-            transform: rotate(90deg);
-        }
-
-        .empty-list {
-            text-align: center;
-            padding: 48px;
-            color: #94a3b8;
-            font-size: 14px;
-            background: #ffffff;
-            border: 1px dashed #e2e8f0;
-            border-radius: 16px;
-        }
-
-        /* Login UI Styles */
-        #loginContainer {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-        }
-
-        .login-card {
-            background: #ffffff;
-            padding: 40px;
-            border-radius: 24px;
-            box-shadow: 0 20px 50px rgba(14, 165, 233, 0.1);
-            width: 100%;
-            max-width: 400px;
-            border: 1px solid #e0f2fe;
-            text-align: center;
-        }
-
-        .login-card h2 {
-            font-family: 'Orbitron', monospace;
-            font-weight: 700;
-            margin-bottom: 30px;
-            color: #0ea5e9;
-            letter-spacing: 2px;
-        }
-
-        .login-card .form-group {
-            text-align: left;
-            margin-bottom: 20px;
-        }
-
-        .login-card .form-label {
-            font-size: 13px;
-            color: #64748b;
-        }
-
-        .login-btn {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #0ea5e9, #0284c7);
-            border: none;
-            border-radius: 12px;
-            color: #fff;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-top: 10px;
-        }
-
-        .login-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(14, 165, 233, 0.2);
-        }
-
-        #loginError {
-            color: #ef4444;
-            font-size: 13px;
-            margin-top: 15px;
-            min-height: 20px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swift Screen - Manage</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&family=Orbitron:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#f8fbff;color:#1e293b;font-family:'Noto Sans KR',sans-serif;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(135,206,235,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(135,206,235,.08) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0}
+/* Login */
+#loginContainer{position:fixed;inset:0;background:#fff;display:flex;align-items:center;justify-content:center;z-index:10000}
+.login-card{background:#fff;padding:40px;border-radius:24px;box-shadow:0 20px 50px rgba(14,165,233,.1);width:100%;max-width:400px;border:1px solid #e0f2fe;text-align:center}
+.login-card h2{font-family:'Orbitron',monospace;font-weight:700;margin-bottom:30px;color:#0ea5e9;letter-spacing:2px}
+.fi{width:100%;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px 14px;font-size:15px;font-family:inherit;color:#1e293b;outline:none;transition:.2s}
+.fi:focus{border-color:#0ea5e9;box-shadow:0 0 0 3px rgba(14,165,233,.1)}
+.fi::placeholder{color:#94a3b8}
+.fl{display:block;font-size:13px;font-weight:600;color:#475569;margin:12px 0 6px;text-align:left}
+.btn-primary{width:100%;padding:14px;background:linear-gradient(135deg,#0ea5e9,#0284c7);border:none;border-radius:12px;color:#fff;font-weight:700;cursor:pointer;font-family:inherit;font-size:15px;transition:.2s;margin-top:12px}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(14,165,233,.2)}
+#loginError{color:#ef4444;font-size:13px;margin-top:12px;min-height:18px}
+/* Main App */
+#mainApp{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:16px 20px;min-height:100vh;display:none;flex-direction:column}
+.header{display:flex;align-items:center;justify-content:space-between;padding:8px 0 16px;border-bottom:2px solid #e0f2fe}
+.header-left{display:flex;align-items:center;gap:10px}
+.hbtn{padding:6px 14px;border-radius:8px;font-size:12px;cursor:pointer;border:1px solid #e2e8f0;background:#f1f5f9;color:#64748b;font-family:inherit;transition:.2s;text-decoration:none}
+.hbtn:hover{background:#0ea5e9;color:#fff;border-color:#0ea5e9}
+.page-title{font-family:'Orbitron',monospace;font-size:18px;font-weight:700;background:linear-gradient(135deg,#0ea5e9,#0284c7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px}
+.add-btn{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#0ea5e9,#0284c7);border:none;color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;box-shadow:0 4px 12px rgba(14,165,233,.2)}
+.add-btn:hover{transform:scale(1.08);box-shadow:0 6px 18px rgba(14,165,233,.3)}
+/* 3-Tier Layout */
+.tiers{display:flex;flex-direction:column;gap:16px;margin-top:16px;flex:1}
+.tier{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:16px;box-shadow:0 4px 15px rgba(0,0,0,.02)}
+.tier-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.tier-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.tier-title::before{content:'';width:3px;height:16px;border-radius:2px}
+.tier.t1 .tier-title{color:#6366f1} .tier.t1 .tier-title::before{background:#6366f1}
+.tier.t2 .tier-title{color:#0ea5e9} .tier.t2 .tier-title::before{background:#0ea5e9}
+.tier.t3 .tier-title{color:#f43f5e} .tier.t3 .tier-title::before{background:#f43f5e}
+.cnt{background:#f1f5f9;color:#64748b;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700}
+.sub-tiers{display:flex;gap:12px}
+.sub-tier{flex:1;min-height:60px}
+.sub-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #f1f5f9}
+.sub-label.res-label{color:#0ea5e9}
+.sub-label.walk-label{color:#f59e0b}
+/* Drop Zones */
+.drop-zone{min-height:50px;border:2px dashed transparent;border-radius:12px;padding:4px;transition:.2s}
+.drop-zone.drag-over{border-color:#0ea5e9;background:rgba(14,165,233,.04)}
+/* Patient Cards */
+.p-card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;margin-bottom:8px;cursor:grab;transition:.2s;position:relative}
+.p-card:hover{border-color:#0ea5e9;box-shadow:0 4px 12px rgba(14,165,233,.06);transform:translateY(-1px)}
+.p-card.dragging{opacity:.4;border:2px dashed #0ea5e9}
+.p-card-top{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.p-card-top strong{font-size:14px;color:#1e293b}
+.p-num{font-family:'Orbitron',monospace;font-size:10px;color:#94a3b8;background:#f1f5f9;width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:6px;flex-shrink:0}
+.tag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px}
+.tag.res{background:#e0f2fe;color:#0284c7}
+.tag.walk{background:#fef3c7;color:#d97706}
+.tag.doc{background:#f0fdf4;color:#16a34a}
+.p-note{font-size:11px;color:#64748b;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p-actions{position:absolute;top:8px;right:8px;display:flex;gap:4px}
+.p-actions button{width:24px;height:24px;border:none;background:transparent;cursor:pointer;border-radius:6px;font-size:12px;transition:.2s;display:flex;align-items:center;justify-content:center}
+.p-actions button:hover{background:#e2e8f0}
+/* Modal */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);z-index:5000;display:none;align-items:center;justify-content:center}
+.modal-card{background:#fff;border-radius:20px;padding:28px;width:100%;max-width:440px;box-shadow:0 20px 50px rgba(0,0,0,.1);max-height:90vh;overflow-y:auto}
+.modal-card h3{font-size:16px;font-weight:700;color:#0ea5e9;margin-bottom:16px}
+.modal-btns{display:flex;gap:10px;margin-top:16px}
+.modal-btns button{flex:1;padding:12px;border-radius:10px;border:none;font-weight:700;cursor:pointer;font-family:inherit;font-size:14px;transition:.2s}
+.modal-btns .ok{background:linear-gradient(135deg,#0ea5e9,#0284c7);color:#fff}
+.modal-btns .cancel{background:#f1f5f9;color:#64748b}
+.modal-btns button:hover{transform:translateY(-1px)}
+/* Doctor Section */
+.config-section{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:16px;margin-top:16px;margin-bottom:30px}
+.config-title{font-size:14px;font-weight:700;color:#0ea5e9;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.config-title::before{content:'';width:3px;height:16px;background:linear-gradient(180deg,#7dd3fc,#0ea5e9);border-radius:2px}
+.doc-chip{display:inline-flex;align-items:center;gap:4px;background:#f0f9ff;border:1px solid #bae6fd;color:#0284c7;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;margin:3px}
+.doc-chip button{border:none;background:transparent;color:#94a3b8;cursor:pointer;font-size:14px;padding:0 2px}
+.doc-chip button:hover{color:#ef4444}
+.row{display:flex;gap:10px;align-items:flex-end}
+.row .fi{flex:1}
+.sm-btn{padding:10px 18px;border-radius:10px;border:none;background:linear-gradient(135deg,#0ea5e9,#0284c7);color:#fff;font-weight:700;cursor:pointer;font-family:inherit;font-size:13px;white-space:nowrap;transition:.2s}
+.sm-btn:hover{transform:translateY(-1px)}
+/* Toast */
+.toast{position:fixed;top:20px;right:20px;padding:12px 22px;background:#fff;border:1px solid #10b981;border-radius:12px;color:#059669;font-size:13px;font-weight:600;box-shadow:0 10px 25px rgba(0,0,0,.05);transform:translateX(120%);transition:.4s cubic-bezier(.16,1,.3,1);z-index:6000;display:flex;align-items:center;gap:8px}
+.toast.show{transform:translateX(0)}
+select.fi{appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%230ea5e9' d='M6 8L0 0h12z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+</style>
 </head>
-
 <body>
-    <!-- Login UI -->
-    <div id="loginContainer">
-        <div class="login-card">
-            <h2>SWIFT LOGIN</h2>
-            <div class="form-group">
-                <label class="form-label">Username</label>
-                <input type="text" id="username" class="form-input" placeholder="Enter username">
-            </div>
-            <div class="form-group">
-                <label class="form-label">Password</label>
-                <input type="password" id="password" class="form-input" placeholder="Enter password">
-            </div>
-            <p id="loginError"></p>
-            <button class="login-btn" onclick="handleLogin()">Sign In</button>
-            <a href="index.html"
-                style="display: block; margin-top: 20px; color: #64748b; text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s;"
-                onmouseover="this.style.color='#0ea5e9'" onmouseout="this.style.color='#64748b'">← Return to Screen</a>
-        </div>
-    </div>
+<!-- Login -->
+<div id="loginContainer">
+<div class="login-card">
+<h2>SWIFT LOGIN</h2>
+<label class="fl">Username</label><input type="text" id="username" class="fi" placeholder="Enter username">
+<label class="fl">Password</label><input type="password" id="password" class="fi" placeholder="Enter password">
+<p id="loginError"></p>
+<button class="btn-primary" onclick="handleLogin()">Sign In</button>
+<a href="index.html" style="display:block;margin-top:16px;color:#64748b;text-decoration:none;font-size:13px;">← Return to Screen</a>
+</div>
+</div>
 
-    <!-- Management Application (Hidden by default) -->
-    <div class="container" id="mainApp" style="display: none;">
-        <!-- Header -->
-        <header class="header">
-            <div class="header-left">
-                <a href="index.html" class="back-btn" id="backBtn">←</a>
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <a href="index.html" class="clear-all-btn"
-                        style="background: #f0f9ff; border-color: #bae6fd; color: #0ea5e9; text-decoration: none;">Screen</a>
-                    <button onclick="handleLogout()" class="clear-all-btn"
-                        style="background: #f1f5f9; border-color: #e2e8f0; color: #64748b;">Logout</button>
-                    <div class="page-title">MANAGE</div>
-                    <div class="page-subtitle">Screen Data Management</div>
-                </div>
-            </div>
-        </header>
+<!-- Main App -->
+<div id="mainApp">
+<header class="header">
+<div class="header-left">
+<a href="index.html" class="hbtn">← Screen</a>
+<a href="doctor_page.html" class="hbtn">👨‍⚕️ Doctor View</a>
+<button class="hbtn" onclick="handleLogout()">Logout</button>
+<div class="page-title">MANAGE</div>
+</div>
+<div style="display:flex;gap:10px;align-items:center">
+<button class="hbtn" onclick="clearAll()" style="color:#e11d48;border-color:#fecdd3;background:#fff1f2">Clear All</button>
+<button class="add-btn" onclick="document.getElementById('addModal').style.display='flex'" title="Add Patient">+</button>
+</div>
+</header>
 
-        <!-- Input Form -->
-        <div class="input-card">
-            <div class="card-title">Add New Entry</div>
-            <form id="entryForm">
-                <div class="form-row" style="display: flex; gap: 16px; margin-bottom: 20px;">
-                    <div style="flex: 1;">
-                        <label class="form-label" for="firstNameInput">First Name</label>
-                        <input type="text" class="form-input" id="firstNameInput" placeholder="e.g. James" value=""
-                            required autocomplete="off">
-                    </div>
-                    <div style="flex: 1;">
-                        <label class="form-label" for="lastNameInput">Last Name</label>
-                        <input type="text" class="form-input" id="lastNameInput" placeholder="e.g. Lee" value=""
-                            required autocomplete="off">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="roomSelect">Location</label>
-                    <select class="form-select" id="roomSelect" required onchange="toggleManualRoom()">
-                        <option value="" disabled selected>Select a location</option>
-                        <option value="Clinic 1">🏥 Clinic 1</option>
-                        <option value="Clinic 2">🏥 Clinic 2</option>
-                        <option value="Vital Room">💉 Vital Room</option>
-                        <option value="Manual">📝 Manual Input</option>
-                    </select>
-                    <input type="text" class="form-input" id="manualRoomInput" placeholder="Enter location name"
-                        style="display: none; margin-top: 10px;">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="noteInput">Notes</label>
-                    <textarea class="form-textarea" id="noteInput" placeholder="Enter notes (optional)"></textarea>
-                </div>
-                <button type="submit" class="submit-btn" id="submitBtn">Add to Screen</button>
-            </form>
-        </div>
+<!-- 3 Tiers -->
+<div class="tiers">
+<!-- Tier 1: Internal Waitlist -->
+<div class="tier t1">
+<div class="tier-header"><div class="tier-title">📋 Internal Waitlist <span class="cnt" id="cntInternal">0</span></div></div>
+<div class="drop-zone" data-list="internal_waitlist" id="internalItems"></div>
+</div>
 
+<!-- Tier 2: Waiting List (Reservation + Walk-in) -->
+<div class="tier t2">
+<div class="tier-header"><div class="tier-title">⏳ Waiting List <span class="cnt" id="cntRes">0</span> + <span class="cnt" id="cntWalk">0</span></div></div>
+<div class="sub-tiers">
+<div class="sub-tier"><div class="sub-label res-label">📅 Reservation</div><div class="drop-zone" data-list="waiting_reservation" id="reservationItems"></div></div>
+<div class="sub-tier"><div class="sub-label walk-label">🚶 Walk-in</div><div class="drop-zone" data-list="waiting_walkin" id="walkinItems"></div></div>
+</div>
+</div>
 
+<!-- Tier 3: Screen List -->
+<div class="tier t3">
+<div class="tier-header"><div class="tier-title">📺 Screen List (Now Calling) <span class="cnt" id="cntScreen">0</span></div></div>
+<div class="drop-zone" data-list="screen_list" id="screenItems"></div>
+</div>
+</div>
 
-        <!-- Current List -->
-        <div class="list-section">
-            <div class="list-header">
-                <div class="list-title">Current List <span class="count-badge" id="countBadge">0</span></div>
-                <button class="clear-all-btn" id="clearAllBtn">Clear All</button>
-            </div>
-            <div class="list-items" id="listItems">
-                <!-- Dynamic items -->
-            </div>
-        </div>
+<!-- Config: Default Message -->
+<div class="config-section">
+<div class="config-title">Screen Configuration</div>
+<label class="fl">Default Message (shown when empty)</label>
+<div class="row"><input type="text" class="fi" id="defaultMsg" placeholder="Welcome message"><button class="sm-btn" onclick="saveConfig()">Save</button></div>
+</div>
 
-        <!-- Configuration Card (Moved below waitlist) -->
-        <div class="input-card" style="margin-top: 24px; padding: 20px 28px; margin-bottom: 40px;">
-            <div class="card-title" style="margin-bottom: 16px;">Screen Configuration</div>
-            <div class="form-group" style="margin-bottom: 12px;">
-                <label class="form-label" for="defaultMessageInput">Default Message (Shown when queue is empty)</label>
-                <div style="display: flex; gap: 12px;">
-                    <input type="text" class="form-input" id="defaultMessageInput"
-                        placeholder="e.g. Welcome to Swift Medical Clinic">
-                    <button class="submit-btn" style="width: auto; padding: 0 24px; font-size: 14px;"
-                        onclick="updateConfig()">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
+<!-- Config: Doctors -->
+<div class="config-section" style="margin-bottom:40px">
+<div class="config-title">Doctor Management</div>
+<div id="doctorList" style="margin-bottom:12px"><span style="color:#94a3b8">No doctors</span></div>
+<div class="row"><input type="text" class="fi" id="newDoctorName" placeholder="Doctor name"><button class="sm-btn" onclick="addDoctor()">Add</button></div>
+</div>
+</div>
 
-    <!-- Toast -->
-    <div class="toast" id="toast">
-        <span>✅</span>
-        <span id="toastMessage">Added to Screen</span>
-    </div>
+<!-- Add Patient Modal -->
+<div class="modal" id="addModal">
+<div class="modal-card">
+<h3>➕ Add New Patient</h3>
+<label class="fl">First Name</label><input type="text" class="fi" id="addFirst" placeholder="James">
+<label class="fl">Last Name</label><input type="text" class="fi" id="addLast" placeholder="Lee">
+<label class="fl">Type</label><select class="fi" id="addType"><option value="reservation">Reservation</option><option value="walkin" selected>Walk-in</option></select>
+<label class="fl">Doctor</label><select class="fi doctor-select" id="addDoctor"><option value="">No doctor</option></select>
+<label class="fl">Internal Note</label><input type="text" class="fi" id="addIntNote" placeholder="Optional note">
+<div class="modal-btns"><button class="cancel" onclick="document.getElementById('addModal').style.display='none'">Cancel</button><button class="ok" onclick="addPatient()">Add</button></div>
+</div>
+</div>
 
-    <script>
-        let lastManageVersion = -1;
+<!-- Edit Patient Modal -->
+<div class="modal" id="editModal">
+<div class="modal-card">
+<h3>✏️ Edit Patient</h3>
+<input type="hidden" id="editId">
+<label class="fl">First Name</label><input type="text" class="fi" id="editFirst">
+<label class="fl">Last Name</label><input type="text" class="fi" id="editLast">
+<label class="fl">Type</label><select class="fi" id="editType"><option value="reservation">Reservation</option><option value="walkin">Walk-in</option></select>
+<label class="fl">Doctor</label><select class="fi doctor-select" id="editDoctor"><option value="">No doctor</option></select>
+<label class="fl">Internal Note</label><input type="text" class="fi" id="editIntNote">
+<label class="fl">External Note (shown on screen)</label><input type="text" class="fi" id="editExtNote">
+<label class="fl">Room / Location</label><input type="text" class="fi" id="editRoom" placeholder="e.g. Clinic 1">
+<div class="modal-btns"><button class="cancel" onclick="document.getElementById('editModal').style.display='none'">Cancel</button><button class="ok" onclick="saveEdit()">Save</button></div>
+</div>
+</div>
 
-        // Load data from server
-        async function fetchListData(forceRender) {
-            const apiBase = localStorage.getItem('swift_api_base') || "https://swift-medical-api.naranja.my";
-            try {
-                const response = await fetch(`${apiBase}/screen-data`);
-                if (response.ok) {
-                    const data = await response.json();
-                    const serverVersion = data.version || 0;
+<!-- Move Confirm Modal -->
+<div class="modal" id="moveModal">
+<div class="modal-card">
+<h3>🔄 Move Patient</h3>
+<div id="moveInfo" style="margin-bottom:12px"></div>
+<div id="moveExtraFields" style="display:none">
+<label class="fl">Room / Location</label><input type="text" class="fi" id="moveRoom" placeholder="Clinic 1">
+<label class="fl">External Note</label><input type="text" class="fi" id="moveExtNote" placeholder="Shown on screen">
+</div>
+<div class="modal-btns"><button class="cancel" id="cancelMoveBtn">Cancel</button><button class="ok" id="confirmMoveBtn">Confirm</button></div>
+</div>
+</div>
 
-                    // Only re-render if data actually changed
-                    if (serverVersion !== lastManageVersion || forceRender) {
-                        lastManageVersion = serverVersion;
-                        renderList(data.queue || []);
-                    }
+<!-- Toast -->
+<div class="toast" id="toast"><span>✅</span><span id="toastMsg">Done</span></div>
 
-                    // Update default message input if it's currently empty (first load)
-                    const msgInput = document.getElementById('defaultMessageInput');
-                    if (msgInput && !msgInput.value && data.default_message) {
-                        msgInput.value = data.default_message;
-                    }
-                }
-            } catch (e) {
-                console.error("Failed to fetch data:", e);
-            }
-        }
-
-        // Room class
-        function getRoomClass(room) {
-            if (room === 'Clinic 1') return 'room1';
-            if (room === 'Clinic 2') return 'room2';
-            if (room === 'Vital Room') return 'vital';
-            return 'room1';
-        }
-
-        function toggleManualRoom() {
-            const select = document.getElementById('roomSelect');
-            const input = document.getElementById('manualRoomInput');
-            if (select.value === 'Manual') {
-                input.style.display = 'block';
-                input.focus();
-            } else {
-                input.style.display = 'none';
-            }
-        }
-
-        // Render list
-        function renderList(data) {
-            const listItems = document.getElementById('listItems');
-            const countBadge = document.getElementById('countBadge');
-            countBadge.textContent = data.length;
-
-            if (data.length === 0) {
-                listItems.innerHTML = '<div class="empty-list">No entries found</div>';
-                return;
-            }
-
-            listItems.innerHTML = '';
-            data.forEach((item, index) => {
-                const li = document.createElement('div');
-                li.className = 'list-item';
-                li.draggable = true;
-                li.dataset.id = item.id;
-
-                const roomClass = getRoomClass(item.room);
-
-                li.innerHTML = `
-                    <div class="drag-handle">☰</div>
-                    <div class="item-num">${String(index + 1).padStart(2, '0')}</div>
-                    <div class="item-info">
-                        <div class="item-name">${escapeHtml(item.firstName)} ${escapeHtml(item.lastName)}</div>
-                        <div class="item-detail">${item.note ? escapeHtml(item.note) : 'No notes'}</div>
-                    </div>
-                    <span class="item-room ${roomClass}">${escapeHtml(item.room)}</span>
-                    <button class="delete-btn" data-id="${item.id}" title="Delete">✕</button>
-                `;
-
-                // Drag and Drop Events
-                li.addEventListener('dragstart', handleDragStart);
-                li.addEventListener('dragover', handleDragOver);
-                li.addEventListener('dragleave', handleDragLeave);
-                li.addEventListener('drop', handleDrop);
-                li.addEventListener('dragend', handleDragEnd);
-
-                listItems.appendChild(li);
-            });
-        }
-
-        let dragSrcEl = null;
-
-        function handleDragStart(e) {
-            this.classList.add('dragging');
-            dragSrcEl = this;
-            e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/html', this.innerHTML);
-        }
-
-        function handleDragOver(e) {
-            if (e.preventDefault) {
-                e.preventDefault();
-            }
-            this.classList.add('drag-over');
-            e.dataTransfer.dropEffect = 'move';
-            return false;
-        }
-
-        function handleDragLeave(e) {
-            this.classList.remove('drag-over');
-        }
-
-        function handleDragEnd(e) {
-            this.classList.remove('dragging');
-            const items = document.querySelectorAll('.list-item');
-            items.forEach(item => item.classList.remove('drag-over'));
-        }
-
-        async function handleDrop(e) {
-            if (e.stopPropagation) {
-                e.stopPropagation();
-            }
-
-            if (dragSrcEl !== this) {
-                // Reorder in DOM
-                const list = document.getElementById('listItems');
-                const items = Array.from(list.children);
-                const fromIndex = items.indexOf(dragSrcEl);
-                const toIndex = items.indexOf(this);
-
-                if (fromIndex < toIndex) {
-                    this.after(dragSrcEl);
-                } else {
-                    this.before(dragSrcEl);
-                }
-
-                // Sync with server
-                await saveNewOrder();
-            }
-
-            return false;
-        }
-
-        async function saveNewOrder() {
-            const list = document.getElementById('listItems');
-            const items = Array.from(list.querySelectorAll('.list-item'));
-            const newIds = items.map(item => item.dataset.id);
-
-            const apiBase = localStorage.getItem('swift_api_base') || "https://swift-medical-api.naranja.my";
-            try {
-                const resp = await fetch(`${apiBase}/screen-reorder`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ids: newIds })
-                });
-                
-                if (resp.ok) {
-                    showToast('Order updated');
-                    // Refresh data to update numbers and ensure sync
-                    await fetchListData(true);
-                }
-            } catch (err) {
-                console.error("Failed to reorder:", err);
-            }
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        // Show toast
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toastMessage').textContent = message;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2500);
-        }
-
-        // Form submit
-        document.getElementById('entryForm').addEventListener('submit', async function (e) {
-            e.preventDefault();
-
-            const firstName = document.getElementById('firstNameInput').value.trim();
-            const lastName = document.getElementById('lastNameInput').value.trim();
-            const roomSelect = document.getElementById('roomSelect');
-            const manualRoomInput = document.getElementById('manualRoomInput');
-            let room = roomSelect.value;
-
-            if (room === 'Manual') {
-                room = manualRoomInput.value.trim();
-                if (!room) {
-                    alert('Please enter a location name');
-                    return;
-                }
-            }
-
-            const note = document.getElementById('noteInput').value.trim();
-
-            if (!firstName || !lastName || !room) return;
-
-            const dataObj = {
-                firstName: firstName,
-                lastName: lastName,
-                room: room,
-                note: note,
-                timestamp: new Date().toISOString()
-            };
-
-            const apiBase = localStorage.getItem('swift_api_base') || "https://swift-medical-api.naranja.my";
-
-            try {
-                const resp = await fetch(`${apiBase}/screen-update`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(dataObj)
-                });
-
-                if (resp.ok) {
-                    await fetchListData();
-                    // Reset form
-                    document.getElementById('firstNameInput').value = '';
-                    document.getElementById('lastNameInput').value = '';
-                    roomSelect.selectedIndex = 0;
-                    manualRoomInput.style.display = 'none';
-                    manualRoomInput.value = '';
-                    document.getElementById('noteInput').value = '';
-                    document.getElementById('firstNameInput').focus();
-
-                    showToast('Added to screen');
-                }
-            } catch (err) {
-                console.error("Server update failed", err);
-            }
-        });
-
-        // Delete single item
-        document.getElementById('listItems').addEventListener('click', async function (e) {
-            const btn = e.target.closest('.delete-btn');
-            if (!btn) return;
-
-            const id = btn.dataset.id;
-            const apiBase = localStorage.getItem('swift_api_base') || "https://swift-medical-api.naranja.my";
-
-            try {
-                const resp = await fetch(`${apiBase}/screen-delete/${id}`, {
-                    method: 'DELETE'
-                });
-                if (resp.ok) {
-                    await fetchListData();
-                    showToast('Entry deleted');
-                }
-            } catch (err) {
-                console.error(err);
-            }
-        });
-
-        // Clear all
-        document.getElementById('clearAllBtn').addEventListener('click', async function () {
-            if (!confirm('Are you sure you want to clear the entire list?')) return;
-            const apiBase = localStorage.getItem('swift_api_base') || "https://swift-medical-api.naranja.my";
-            try {
-                const resp = await fetch(`${apiBase}/screen-clear`, {
-                    method: 'DELETE'
-                });
-                if (resp.ok) {
-                    await fetchListData();
-                    showToast('All entries cleared');
-                }
-            } catch (err) {
-                console.error(err);
-            }
-        });
-
-        // Poll for updates
-        setInterval(() => {
-            if (document.getElementById('mainApp').style.display !== 'none') {
-                fetchListData();
-            }
-        }, 3000);
-
-        async function updateConfig() {
-            const msg = document.getElementById('defaultMessageInput').value.trim();
-            if (!msg) return;
-
-            const apiBase = localStorage.getItem('swift_api_base') || "https://swift-medical-api.naranja.my";
-            try {
-                const resp = await fetch(`${apiBase}/screen-config`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ default_message: msg })
-                });
-                if (resp.ok) {
-                    showToast('Configuration updated');
-                }
-            } catch (err) {
-                console.error(err);
-            }
-        }
-
-        // Login Logic
-        async function handleLogin() {
-            const u = document.getElementById('username').value;
-            const p = document.getElementById('password').value;
-            const api = "https://swift-medical-api.naranja.my";
-            const err = document.getElementById('loginError');
-
-            try {
-                const res = await fetch(`${api}/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username: u, password: p })
-                });
-
-                if (res.ok) {
-                    const data = await res.json();
-                    localStorage.setItem('swift_token', data.token);
-                    localStorage.setItem('swift_api_base', api);
-                    checkAuth();
-                } else {
-                    err.innerText = "Login information is incorrect.";
-                }
-            } catch (e) {
-                err.innerText = "A server connection error occurred.";
-            }
-        }
-
-        function checkAuth() {
-            const token = localStorage.getItem('swift_token');
-            const loginUI = document.getElementById('loginContainer');
-            const mainUI = document.getElementById('mainApp');
-
-            console.log("Checking auth... Token:", token);
-
-            if (token && token !== "undefined") {
-                loginUI.style.display = 'none';
-                mainUI.style.display = 'flex';
-                fetchListData();
-            } else {
-                loginUI.style.display = 'flex';
-                mainUI.style.display = 'none';
-            }
-        }
-
-        function handleLogout() {
-            localStorage.removeItem('swift_token');
-            localStorage.removeItem('swift_api_base');
-            checkAuth();
-        }
-
-        // Initial render
-        checkAuth();
-    </script>
+<script src="manage.js"></script>
 </body>
-
 </html>

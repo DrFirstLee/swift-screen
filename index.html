@@ -28,7 +28,6 @@
             align-items: center;
         }
 
-        /* Very subtle background grid */
         body::before {
             content: '';
             position: fixed;
@@ -51,214 +50,38 @@
             flex-direction: column;
             height: 100vh;
             width: 100%;
-            max-width: 95%;
-            padding: 30px;
+            max-width: 98%;
+            padding: 20px 30px;
             align-items: center;
         }
 
-        .main-content {
-            display: flex;
-            width: 100%;
-            flex: 1;
-            gap: 30px;
-            margin-top: 10px;
-            overflow: hidden;
-        }
-
-        /* Top Header Container */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             width: 100%;
+            flex-shrink: 0;
         }
 
         .logo-img {
-            width: 250px;
-            max-width: 50%;
+            width: 220px;
+            max-width: 40%;
             height: auto;
             animation: float 6s ease-in-out infinite;
         }
 
         @keyframes float {
-
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-
-            50% {
-                transform: translateY(-10px);
-            }
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
         }
 
-        .logo-text {
-            font-family: 'Orbitron', monospace;
-            font-size: 28px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #0ea5e9, #0284c7);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: 4px;
-        }
-
-        /* Main Display Card - Sky Blue Gradient */
-        .display-card {
-            flex: 4;
-            height: 100%;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            background: linear-gradient(145deg, #f0f9ff 0%, #bae6fd 100%);
-            border-radius: 40px;
-            border: 1px solid #bae6fd;
-            box-shadow: 0 40px 80px rgba(14, 165, 233, 0.12);
-            padding: 40px;
-            position: relative;
-            animation: cardAppear 1s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        @keyframes cardAppear {
-            from {
-                opacity: 0;
-                transform: translateY(40px) scale(0.95);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .status-badge {
-            position: absolute;
-            top: 40px;
-            right: 40px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 20px;
-            background: #f0f9ff;
-            border: 1px solid #bae6fd;
-            border-radius: 20px;
-            font-weight: 700;
-            color: #0369a1;
-            font-size: 14px;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #22c55e;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-
-            50% {
-                transform: scale(1.5);
-                opacity: 0.5;
-            }
-        }
-
-        /* Patient Info Styling */
-        h1 {
-            font-size: clamp(50px, 12vw, 110px);
-            font-weight: 900;
-            color: #0f172a;
-            margin-bottom: 20px;
-            letter-spacing: -2px;
-            text-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-            line-height: 1.1;
-        }
-
-        h3 {
-            font-size: clamp(24px, 4vw, 40px);
-            color: #475569;
-            font-weight: 500;
-            margin-bottom: 25px;
-        }
-
-        h2 {
-            font-size: clamp(28px, 5vw, 64px);
-            font-weight: 900;
-            color: #ffffff;
-            padding: 12px 40px;
-            border-radius: 80px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            display: inline-block;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-        }
-
-        @media screen and (max-width: 768px) {
-            .container {
-                padding: 20px;
-            }
-
-            .display-card {
-                padding: 30px 20px;
-                border-radius: 24px;
-            }
-
-            .status-badge {
-                top: 20px;
-                right: 20px;
-                font-size: 12px;
-                padding: 6px 12px;
-            }
-
-            .logo-img {
-                width: 200px;
-            }
-
-            h2 {
-                padding: 12px 30px;
-            }
-
-            .clock-time {
-                font-size: 24px;
-            }
-        }
-
-        /* Empty State */
-        .empty-state {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            opacity: 0.5;
-        }
-
-        .empty-icon {
-            font-size: 80px;
-            margin-bottom: 20px;
-        }
-
-        .empty-text {
-            font-size: 24px;
-            color: #94a3b8;
-            letter-spacing: 2px;
-        }
-
-        /* Header Clock */
         .header-clock {
             text-align: right;
         }
 
         .clock-time {
             font-family: 'Outfit', sans-serif;
-            font-size: 38px;
+            font-size: 34px;
             font-weight: 700;
             color: #97c4de;
             letter-spacing: -1px;
@@ -266,92 +89,256 @@
 
         .clock-date {
             font-family: 'Outfit', sans-serif;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 500;
             color: #94a3b8;
-            margin-top: 5px;
+            margin-top: 4px;
         }
 
-        /* Waiting List */
-        .waiting-list-container {
-            flex: 1;
-            height: 100%;
+        /* Main Content Layout: 3/4 + 1/4 */
+        .main-content {
             display: flex;
-            flex-direction: column;
+            width: 100%;
+            flex: 1;
+            gap: 20px;
+            margin-top: 15px;
             overflow: hidden;
         }
 
-        .waiting-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #0ea5e9;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-bottom: 2px solid #e0f2fe;
-            padding-bottom: 10px;
+        /* ── Main Screen (3/4) ── */
+        .main-screen {
+            flex: 3;
+            display: grid;
+            gap: 16px;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* Dynamic grid: 1 = full, 2 = 1x2, 3 = 2x2 (one empty), 4 = 2x2 */
+        .main-screen.grid-1 { grid-template-columns: 1fr; grid-template-rows: 1fr; }
+        .main-screen.grid-2 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr; }
+        .main-screen.grid-3,
+        .main-screen.grid-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+
+        .call-card {
+            background: linear-gradient(145deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-radius: 28px;
+            border: 1px solid #bae6fd;
+            box-shadow: 0 20px 50px rgba(14, 165, 233, 0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 30px 24px;
+            position: relative;
+            overflow: hidden;
+            animation: cardAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes cardAppear {
+            from { opacity: 0; transform: translateY(30px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .call-card .status-badge {
+            position: absolute;
+            top: 18px;
+            right: 18px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            padding: 6px 14px;
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(6px);
+            border: 1px solid #bae6fd;
+            border-radius: 14px;
+            font-weight: 700;
+            color: #0369a1;
+            font-size: 11px;
         }
 
-        .waiting-list {
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #22c55e;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+        }
+
+        .call-card .patient-name {
+            font-size: clamp(36px, 8vw, 80px);
+            font-weight: 900;
+            color: #0f172a;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+            line-height: 1.1;
+        }
+
+        /* Smaller text when grid has 2+ cards */
+        .main-screen.grid-2 .patient-name,
+        .main-screen.grid-3 .patient-name,
+        .main-screen.grid-4 .patient-name {
+            font-size: clamp(28px, 5vw, 56px);
+        }
+
+        .call-card .patient-note {
+            font-size: clamp(16px, 3vw, 28px);
+            color: #475569;
+            font-weight: 500;
+            margin-bottom: 14px;
+        }
+
+        .main-screen.grid-2 .patient-note,
+        .main-screen.grid-3 .patient-note,
+        .main-screen.grid-4 .patient-note {
+            font-size: clamp(14px, 2vw, 20px);
+        }
+
+        .call-card .patient-room {
+            font-size: clamp(18px, 3vw, 36px);
+            font-weight: 900;
+            color: #ffffff;
+            padding: 8px 28px;
+            border-radius: 60px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            display: inline-block;
+        }
+
+        .main-screen.grid-2 .patient-room,
+        .main-screen.grid-3 .patient-room,
+        .main-screen.grid-4 .patient-room {
+            font-size: clamp(14px, 2vw, 24px);
+            padding: 6px 20px;
+        }
+
+        /* Empty state for main screen */
+        .empty-state {
+            grid-column: 1 / -1;
+            grid-row: 1 / -1;
             display: flex;
             flex-direction: column;
-            overflow-y: auto;
-            gap: 15px;
-            padding-bottom: 10px;
-            padding-right: 5px;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(145deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-radius: 28px;
+            border: 1px solid #bae6fd;
         }
 
-        .waiting-list::-webkit-scrollbar {
-            width: 6px;
+        .empty-icon { font-size: 60px; margin-bottom: 16px; }
+
+        .empty-text {
+            font-weight: 700;
+            color: #0ea5e9;
+            text-align: center;
+            max-width: 80%;
+            font-size: clamp(22px, 4vw, 42px);
+            line-height: 1.4;
         }
 
-        .waiting-list::-webkit-scrollbar-track {
-            background: #f1f5f9;
-            border-radius: 4px;
+        /* ── Sidebar Waiting List (1/4) ── */
+        .sidebar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            height: 100%;
+            overflow: hidden;
         }
 
-        .waiting-list::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
-        }
-
-        .waiting-card {
+        .sidebar-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
             background: #ffffff;
             border: 1px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 15px;
-            width: 100%;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            animation: cardAppear 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            border-radius: 18px;
+            padding: 14px;
         }
 
-        .waiting-card-name {
-            font-size: 20px;
+        .sidebar-title {
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f1f5f9;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-title.reservation { color: #0ea5e9; }
+        .sidebar-title.walkin { color: #f59e0b; }
+
+        .sidebar-title .count {
+            background: #f1f5f9;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+        }
+
+        .sidebar-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-right: 4px;
+        }
+
+        .sidebar-list::-webkit-scrollbar { width: 4px; }
+        .sidebar-list::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-list::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 4px; }
+
+        .wait-item {
+            padding: 10px 14px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #f1f5f9;
+            animation: cardAppear 0.4s ease-out;
+        }
+
+        .wait-item-name {
+            font-size: 16px;
             font-weight: 700;
             color: #1e293b;
         }
 
-        .waiting-card-room {
-            font-size: 13px;
-            font-weight: 700;
-            color: #ffffff;
-            padding: 4px 10px;
-            border-radius: 10px;
-            align-self: flex-start;
+        .wait-item-type {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 8px;
+            display: inline-block;
+            margin-top: 4px;
         }
 
-        .waiting-card-note {
-            font-size: 13px;
-            color: #64748b;
+        .wait-item-type.res {
+            background: #e0f2fe;
+            color: #0284c7;
         }
 
-        /* Bottom Control Button */
+        .wait-item-type.walk {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .sidebar-empty {
+            color: #94a3b8;
+            font-size: 13px;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        /* Bottom control */
         .manage-link {
             position: fixed;
             bottom: 15px;
@@ -379,12 +366,21 @@
             border-color: #0ea5e9;
             box-shadow: 0 10px 20px rgba(14, 165, 233, 0.1);
         }
+
+        @media screen and (max-width: 768px) {
+            .container { padding: 15px; }
+            .main-content { flex-direction: column; }
+            .sidebar { flex-direction: row; }
+            .sidebar-section { flex: 1; }
+            .call-card { border-radius: 18px; padding: 20px 16px; }
+            .logo-img { width: 160px; }
+            .clock-time { font-size: 24px; }
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <!-- Top Header: Logo + Clock -->
         <header class="header">
             <img src="logo-wide.png" alt="Swift Logo" class="logo-img">
             <div class="header-clock">
@@ -394,16 +390,24 @@
         </header>
 
         <div class="main-content">
-            <!-- Main Display Card (Now Calling) -->
-            <div class="display-card" id="mainDisplay">
-                <!-- Content will be injected by JS -->
+            <!-- Main Screen (3/4): Up to 4 call cards -->
+            <div class="main-screen grid-1" id="mainScreen">
+                <!-- Dynamically rendered -->
             </div>
 
-            <!-- Waiting List -->
-            <div class="waiting-list-container">
-                <div class="waiting-title">Waiting List</div>
-                <div class="waiting-list" id="waitingList">
-                    <!-- Content will be injected by JS -->
+            <!-- Sidebar (1/4): Reservation + Walk-in -->
+            <div class="sidebar">
+                <div class="sidebar-section">
+                    <div class="sidebar-title reservation">
+                        📋 Reservation <span class="count" id="resCount">0</span>
+                    </div>
+                    <div class="sidebar-list" id="reservationList"></div>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-title walkin">
+                        🚶 Walk-in <span class="count" id="walkCount">0</span>
+                    </div>
+                    <div class="sidebar-list" id="walkinList"></div>
                 </div>
             </div>
         </div>
@@ -419,45 +423,15 @@
     </div>
 
     <script>
-        let lastTimestamp = null;
         let lastVersion = -1;
         let audioCtx = null;
         let eventSource = null;
-        let scrollInterval = null;
+        let lastScreenIds = '';
+        let scrollIntervals = {};
 
-        // Auto-scroll for waiting list
-        function startAutoScroll() {
-            const list = document.getElementById('waitingList');
-            if (!list) return;
+        const API_BASE = "https://swift-medical-api.naranja.my";
 
-            // Clear existing interval if any
-            if (scrollInterval) {
-                clearInterval(scrollInterval);
-                scrollInterval = null;
-            }
-
-            // Check if scrolling is needed (waiting items >= 4)
-            // The waiting list items are .waiting-card elements
-            const items = list.getElementsByClassName('waiting-card');
-            if (items.length < 4) return;
-
-            console.log("[Scroll] Starting auto-scroll for " + items.length + " items");
-            
-            scrollInterval = setInterval(() => {
-                const maxScroll = list.scrollHeight - list.clientHeight;
-                if (maxScroll <= 0) return;
-
-                // If we are at the bottom, go back to top
-                if (list.scrollTop >= maxScroll - 10) {
-                    list.scrollTo({ top: 0, behavior: 'smooth' });
-                } else {
-                    // Scroll down by roughly one card height + gap
-                    list.scrollBy({ top: 110, behavior: 'smooth' });
-                }
-            }, 2000);
-        }
-
-        // Sound activation
+        // ── Sound ──
         document.getElementById('soundOverlay').addEventListener('click', function () {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             this.style.display = 'none';
@@ -472,7 +446,6 @@
         function playDing() {
             if (!audioCtx) return;
             if (audioCtx.state === 'suspended') audioCtx.resume();
-
             const now = audioCtx.currentTime;
             function playNote(freq, startTime, duration) {
                 const osc = audioCtx.createOscillator();
@@ -491,7 +464,7 @@
             playNote(1046.50, now + 0.15, 1.0);
         }
 
-        // Clock
+        // ── Clock ──
         function updateClock() {
             const now = new Date();
             const h = String(now.getHours()).padStart(2, '0');
@@ -499,23 +472,20 @@
             const s = String(now.getSeconds()).padStart(2, '0');
             document.getElementById('clock').textContent = `${h}:${m}:${s}`;
             const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-            const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-            const month = months[now.getMonth()];
-            const date = now.getDate();
-            const year = now.getFullYear();
-            const day = days[now.getDay()];
-            document.getElementById('dateDisplay').textContent = `${month} ${date}, ${year} (${day})`;
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const now2 = now;
+            document.getElementById('dateDisplay').textContent =
+                `${months[now2.getMonth()]} ${now2.getDate()}, ${now2.getFullYear()} (${days[now2.getDay()]})`;
         }
         updateClock();
         setInterval(updateClock, 1000);
 
-        // Name Formatting & Masking Logic: James Lee -> James L**
-        function formatAndMaskName(first, last) {
+        // ── Utilities ──
+        function formatName(first, last) {
             if (!first || !last) return '—';
             const f = first.charAt(0).toUpperCase() + first.slice(1);
-            const l = last.charAt(0).toUpperCase() + last.slice(1);
-            const maskedLast = l.charAt(0) + '*'.repeat(Math.max(0, l.length - 1));
-            return `${f} ${maskedLast}`;
+            const l = last.charAt(0).toUpperCase();
+            return `${f} ${l}.`;
         }
 
         function escapeHtml(text) {
@@ -525,93 +495,144 @@
         }
 
         function getRoomColor(room) {
-            if (!room) return '#64748b'; // Default gray
-            
+            if (!room) return '#64748b';
             const r = room.toLowerCase();
-            if (r.includes('clinic 1')) return '#0ea5e9'; // Sky Blue
-            if (r.includes('clinic 2')) return '#8b5cf6'; // Violet
-            if (r.includes('vital room')) return '#f43f5e'; // Rose/Red
-            return '#64748b'; // Others (including Manual)
+            if (r.includes('clinic 1')) return '#0ea5e9';
+            if (r.includes('clinic 2')) return '#8b5cf6';
+            if (r.includes('vital')) return '#f43f5e';
+            return '#64748b';
         }
 
-        // Render screen from data (called only when data changes)
+        // ── Auto Scroll ──
+        function startAutoScroll(listId) {
+            const list = document.getElementById(listId);
+            if (!list) return;
+            if (scrollIntervals[listId]) {
+                clearInterval(scrollIntervals[listId]);
+                scrollIntervals[listId] = null;
+            }
+            const items = list.children;
+            if (items.length < 5) return;
+
+            scrollIntervals[listId] = setInterval(() => {
+                const maxScroll = list.scrollHeight - list.clientHeight;
+                if (maxScroll <= 0) return;
+                if (list.scrollTop >= maxScroll - 5) {
+                    list.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    list.scrollBy({ top: 60, behavior: 'smooth' });
+                }
+            }, 2500);
+        }
+
+        // ── Render ──
         function renderScreenData(data) {
-            const display = document.getElementById('mainDisplay');
-            const waitingListContainer = document.getElementById('waitingList');
-            const queue = data.queue;
+            const mainScreen = document.getElementById('mainScreen');
+            const screenList = data.screen_list || [];
+            const reservationList = data.waiting_reservation || [];
+            const walkinList = data.waiting_walkin || [];
             const defaultMessage = data.default_message || "Welcome to Swift Medical Clinic";
 
-            if (!queue || queue.length === 0) {
-                display.innerHTML = `
+            // Check if screen list changed for ding
+            const newScreenIds = screenList.map(p => p.id).join(',');
+            if (newScreenIds !== lastScreenIds && lastScreenIds !== '' && screenList.length > 0) {
+                playDing();
+            }
+            lastScreenIds = newScreenIds;
+
+            // ── Main Screen (max 4) ──
+            const displayItems = screenList.slice(0, 4);
+            const count = displayItems.length;
+
+            // Set grid class
+            mainScreen.className = 'main-screen';
+            if (count === 0) {
+                mainScreen.classList.add('grid-1');
+            } else if (count === 1) {
+                mainScreen.classList.add('grid-1');
+            } else if (count === 2) {
+                mainScreen.classList.add('grid-2');
+            } else {
+                mainScreen.classList.add('grid-4');
+            }
+
+            if (count === 0) {
+                mainScreen.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-icon">🏥</div>
-                        <div class="empty-text" style="font-weight:700; color:#0ea5e9; text-align:center; max-width:80%; font-size:clamp(24px, 5vw, 48px); line-height:1.4;">${escapeHtml(defaultMessage)}</div>
+                        <div class="empty-text">${escapeHtml(defaultMessage)}</div>
                     </div>
                 `;
-                waitingListContainer.innerHTML = '<div style="color:#94a3b8; font-size: 16px; padding: 20px 0;">Queue is empty</div>';
-                lastTimestamp = null;
-                return;
-            }
-
-            const latest = queue[0];
-
-            // Check for new patient to play ding
-            if (latest.timestamp && latest.timestamp !== lastTimestamp) {
-                playDing();
-                lastTimestamp = latest.timestamp;
-            }
-
-            display.innerHTML = `
-                <div class="status-badge">
-                    <div class="status-dot"></div>
-                    Now Calling
-                </div>
-                <h1>${formatAndMaskName(latest.firstName, latest.lastName)}</h1>
-                <h3>${latest.note ? escapeHtml(latest.note) : ''}</h3>
-                <h2 style="background-color: ${getRoomColor(latest.room)}">${escapeHtml(latest.room)}</h2>
-            `;
-
-            // Render waiting list
-            waitingListContainer.innerHTML = '';
-            if (queue.length > 1) {
-                for (let i = 1; i < queue.length; i++) {
-                    const item = queue[i];
-                    const card = document.createElement('div');
-                    card.className = 'waiting-card';
-                    card.innerHTML = `
-                        <div class="waiting-card-name">${formatAndMaskName(item.firstName, item.lastName)}</div>
-                        <div class="waiting-card-room" style="background-color: ${getRoomColor(item.room)}">${escapeHtml(item.room)}</div>
-                        ${item.note ? `<div class="waiting-card-note">${escapeHtml(item.note)}</div>` : ''}
-                    `;
-                    waitingListContainer.appendChild(card);
-                }
             } else {
-                waitingListContainer.innerHTML = '<div style="color:#94a3b8; font-size: 16px; padding: 20px 0;">No other patients waiting</div>';
+                mainScreen.innerHTML = '';
+                displayItems.forEach((patient, idx) => {
+                    const card = document.createElement('div');
+                    card.className = 'call-card';
+                    card.innerHTML = `
+                        <div class="status-badge">
+                            <div class="status-dot"></div>
+                            Now Calling
+                        </div>
+                        <div class="patient-name">${formatName(patient.firstName, patient.lastName)}</div>
+                        <div class="patient-note">${patient.externalNote ? escapeHtml(patient.externalNote) : ''}</div>
+                        <div class="patient-room" style="background-color: ${getRoomColor(patient.room)}">${escapeHtml(patient.room || '')}</div>
+                    `;
+                    mainScreen.appendChild(card);
+                });
             }
 
-            // Trigger auto-scroll check after rendering
-            setTimeout(startAutoScroll, 500);
+            // ── Sidebar: Reservation ──
+            const resListEl = document.getElementById('reservationList');
+            document.getElementById('resCount').textContent = reservationList.length;
+            if (reservationList.length === 0) {
+                resListEl.innerHTML = '<div class="sidebar-empty">No reservations</div>';
+            } else {
+                resListEl.innerHTML = '';
+                reservationList.forEach(p => {
+                    const item = document.createElement('div');
+                    item.className = 'wait-item';
+                    item.innerHTML = `
+                        <div class="wait-item-name">${formatName(p.firstName, p.lastName)}</div>
+                    `;
+                    resListEl.appendChild(item);
+                });
+            }
+
+            // ── Sidebar: Walk-in ──
+            const walkListEl = document.getElementById('walkinList');
+            document.getElementById('walkCount').textContent = walkinList.length;
+            if (walkinList.length === 0) {
+                walkListEl.innerHTML = '<div class="sidebar-empty">No walk-ins</div>';
+            } else {
+                walkListEl.innerHTML = '';
+                walkinList.forEach(p => {
+                    const item = document.createElement('div');
+                    item.className = 'wait-item';
+                    item.innerHTML = `
+                        <div class="wait-item-name">${formatName(p.firstName, p.lastName)}</div>
+                    `;
+                    walkListEl.appendChild(item);
+                });
+            }
+
+            // Auto scroll
+            setTimeout(() => {
+                startAutoScroll('reservationList');
+                startAutoScroll('walkinList');
+            }, 500);
         }
 
-        // ── SSE (Server-Sent Events) ──
-        // Connect once, receive updates only when data changes.
-        // No more polling = no flickering!
+        // ── SSE ──
         function connectSSE() {
-            const apiBase = "https://swift-medical-api.naranja.my";
-
-            if (eventSource) {
-                eventSource.close();
-            }
-
+            if (eventSource) eventSource.close();
             console.log("[SSE] Connecting...");
-            eventSource = new EventSource(`${apiBase}/screen-events`);
+            eventSource = new EventSource(`${API_BASE}/screen-events`);
 
             eventSource.onmessage = function (event) {
                 try {
                     const data = JSON.parse(event.data);
-                    // Only re-render if the version actually changed
                     if (data.version !== lastVersion) {
-                        console.log(`[SSE] New version ${data.version}, rendering...`);
+                        console.log(`[SSE] New version ${data.version}`);
                         lastVersion = data.version;
                         renderScreenData(data);
                     }
@@ -621,7 +642,7 @@
             };
 
             eventSource.onerror = function () {
-                console.warn("[SSE] Connection lost, reconnecting in 3s...");
+                console.warn("[SSE] Connection lost, reconnecting...");
                 eventSource.close();
                 setTimeout(connectSSE, 3000);
             };
@@ -631,11 +652,9 @@
             };
         }
 
-        // Fallback: initial fetch in case SSE takes a moment to connect
         async function initialFetch() {
-            const apiBase = "https://swift-medical-api.naranja.my";
             try {
-                const response = await fetch(`${apiBase}/screen-data`);
+                const response = await fetch(`${API_BASE}/screen-data`);
                 if (response.ok) {
                     const data = await response.json();
                     lastVersion = data.version;
@@ -646,7 +665,6 @@
             }
         }
 
-        // Boot up: fetch once, then switch to SSE for live updates
         initialFetch();
         connectSSE();
     </script>
