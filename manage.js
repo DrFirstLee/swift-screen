@@ -1,4 +1,6 @@
-const API = localStorage.getItem('swift_api_base') || "https://swift-medical-api.naranja.my";
+const API = (localStorage.getItem('swift_api_base') && localStorage.getItem('swift_api_base') !== 'undefined') 
+            ? localStorage.getItem('swift_api_base') 
+            : "https://swift-medical-api.naranja.my";
 let lastVer = -1;
 let cachedData = null;
 let dragItem = null;
@@ -201,12 +203,32 @@ async function clearAll() {
 
 // ── Doctors ──
 async function addDoctor() {
-    const name = document.getElementById('newDoctorName').value.trim();
+    const input = document.getElementById('newDoctorName');
+    const name = input.value.trim();
     if (!name) return;
-    await fetch(`${API}/screen-doctors`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name}) });
-    document.getElementById('newDoctorName').value = '';
-    fetchData(true);
-    showToast('Doctor added');
+    
+    console.log("[Doctor] Adding:", name);
+    try {
+        const resp = await fetch(`${API}/screen-doctors`, { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json' }, 
+            body: JSON.stringify({ name }) 
+        });
+        
+        if (resp.ok) {
+            console.log("[Doctor] Add success");
+            input.value = '';
+            await fetchData(true);
+            showToast('Doctor added');
+        } else {
+            const err = await resp.json();
+            console.error("[Doctor] Add failed:", err);
+            alert("Failed to add doctor: " + (err.message || "Unknown error"));
+        }
+    } catch (e) {
+        console.error("[Doctor] Connection error:", e);
+        alert("Connection error while adding doctor.");
+    }
 }
 async function removeDoctor(name) {
     await fetch(`${API}/screen-doctors/${encodeURIComponent(name)}`, { method:'DELETE' });

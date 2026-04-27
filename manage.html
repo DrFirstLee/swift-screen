@@ -29,19 +29,19 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .page-title{font-family:'Orbitron',monospace;font-size:18px;font-weight:700;background:linear-gradient(135deg,#0ea5e9,#0284c7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px}
 .add-btn{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#0ea5e9,#0284c7);border:none;color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;box-shadow:0 4px 12px rgba(14,165,233,.2)}
 .add-btn:hover{transform:scale(1.08);box-shadow:0 6px 18px rgba(14,165,233,.3)}
-/* 3-Tier Layout */
-.tiers{display:flex;flex-direction:column;gap:16px;margin-top:16px;flex:1}
-.tier{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:16px;box-shadow:0 4px 15px rgba(0,0,0,.02)}
-.tier-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+/* 3-Tier Layout - Horizontal */
+.tiers{display:flex;flex-direction:row;gap:16px;margin-top:16px;flex:1;align-items:stretch;overflow-x:auto;padding-bottom:10px}
+.tier{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:16px;box-shadow:0 4px 15px rgba(0,0,0,.02);flex:1;min-width:340px;display:flex;flex-direction:column;max-height:calc(100vh - 120px)}
+.tier-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-shrink:0}
 .tier-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
 .tier-title::before{content:'';width:3px;height:16px;border-radius:2px}
 .tier.t1 .tier-title{color:#6366f1} .tier.t1 .tier-title::before{background:#6366f1}
 .tier.t2 .tier-title{color:#0ea5e9} .tier.t2 .tier-title::before{background:#0ea5e9}
 .tier.t3 .tier-title{color:#f43f5e} .tier.t3 .tier-title::before{background:#f43f5e}
 .cnt{background:#f1f5f9;color:#64748b;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700}
-.sub-tiers{display:flex;gap:12px}
-.sub-tier{flex:1;min-height:60px}
-.sub-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #f1f5f9}
+.sub-tiers{display:flex;flex-direction:column;gap:16px;flex:1;overflow-y:auto}
+.sub-tier{flex:1;min-height:150px;display:flex;flex-direction:column}
+.drop-zone{flex:1;min-height:80px;border:2px dashed transparent;border-radius:12px;padding:4px;transition:.2s;overflow-y:auto}
 .sub-label.res-label{color:#0ea5e9}
 .sub-label.walk-label{color:#f59e0b}
 /* Drop Zones */
