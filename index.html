@@ -622,6 +622,26 @@
             }, 500);
         }
 
+        // ── State Hash ──
+        let lastStateHash = '';
+        
+        function getRelevantState(data) {
+            // 스크린에 표시되는 필수 데이터만 추출 (이 데이터가 바뀔 때만 화면 갱신)
+            const simplifyPatient = p => ({
+                id: p.id,
+                first: p.firstName,
+                last: p.lastName,
+                ext: p.externalNote,
+                room: p.room
+            });
+            return JSON.stringify({
+                screen: (data.screen_list || []).map(simplifyPatient),
+                res: (data.waiting_reservation || []).map(simplifyPatient),
+                walk: (data.waiting_walkin || []).map(simplifyPatient),
+                msg: data.default_message
+            });
+        }
+
         // ── SSE ──
         function connectSSE() {
             if (eventSource) eventSource.close();
@@ -632,9 +652,16 @@
                 try {
                     const data = JSON.parse(event.data);
                     if (data.version !== lastVersion) {
-                        console.log(`[SSE] New version ${data.version}`);
                         lastVersion = data.version;
-                        renderScreenData(data);
+                        
+                        const newStateHash = getRelevantState(data);
+                        if (newStateHash !== lastStateHash) {
+                            console.log("[SSE] Relevant state changed, rendering...");
+                            lastStateHash = newStateHash;
+                            renderScreenData(data);
+                        } else {
+                            console.log("[SSE] Version bumped, but no relevant screen changes.");
+                        }
                     }
                 } catch (err) {
                     console.error("[SSE] Parse error:", err);
@@ -658,6 +685,7 @@
                 if (response.ok) {
                     const data = await response.json();
                     lastVersion = data.version;
+                    lastStateHash = getRelevantState(data);
                     renderScreenData(data);
                 }
             } catch (err) {
