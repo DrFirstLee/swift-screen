@@ -28,24 +28,46 @@ function checkAuth() {
 async function fetchData(force) {
     try {
         const r = await fetch(`${API}/screen-data`);
-        if (!r.ok) return;
+        if (!r.ok) {
+            console.error("[Data] Fetch failed status:", r.status);
+            return;
+        }
         const d = await r.json();
-        if (d.version !== lastVer || force) { lastVer = d.version; cachedData = d; renderAll(d); }
-    } catch(e) { console.error(e); }
+        // console.log("[Data] Received from server:", d);
+        
+        if (d.version !== lastVer || force) {
+            console.log(`[Data] Updating UI: v${lastVer} -> v${d.version} (force: ${force})`);
+            lastVer = d.version;
+            cachedData = d;
+            renderAll(d);
+        }
+    } catch(e) {
+        console.error("[Data] Fetch error:", e);
+    }
 }
 
 function renderAll(d) {
-    renderList('internalItems', d.internal_waitlist || [], 'internal_waitlist');
-    renderList('reservationItems', d.waiting_reservation || [], 'waiting_reservation');
-    renderList('walkinItems', d.waiting_walkin || [], 'waiting_walkin');
-    renderList('screenItems', d.screen_list || [], 'screen_list');
-    document.getElementById('cntInternal').textContent = (d.internal_waitlist||[]).length;
-    document.getElementById('cntRes').textContent = (d.waiting_reservation||[]).length;
-    document.getElementById('cntWalk').textContent = (d.waiting_walkin||[]).length;
-    document.getElementById('cntScreen').textContent = (d.screen_list||[]).length;
-    renderDoctors(d.doctors || []);
-    updateDoctorSelects(d.doctors || []);
-    if (!document.getElementById('defaultMsg').value && d.default_message) document.getElementById('defaultMsg').value = d.default_message;
+    try {
+        renderList('internalItems', d.internal_waitlist || [], 'internal_waitlist');
+        renderList('reservationItems', d.waiting_reservation || [], 'waiting_reservation');
+        renderList('walkinItems', d.waiting_walkin || [], 'waiting_walkin');
+        renderList('screenItems', d.screen_list || [], 'screen_list');
+        
+        document.getElementById('cntInternal').textContent = (d.internal_waitlist||[]).length;
+        document.getElementById('cntRes').textContent = (d.waiting_reservation||[]).length;
+        document.getElementById('cntWalk').textContent = (d.waiting_walkin||[]).length;
+        document.getElementById('cntScreen').textContent = (d.screen_list||[]).length;
+        
+        console.log("[Render] Doctors list:", d.doctors);
+        renderDoctors(d.doctors || []);
+        updateDoctorSelects(d.doctors || []);
+        
+        if (!document.getElementById('defaultMsg').value && d.default_message) {
+            document.getElementById('defaultMsg').value = d.default_message;
+        }
+    } catch (err) {
+        console.error("[Render] Error in renderAll:", err);
+    }
 }
 
 function renderList(containerId, items, listName) {
