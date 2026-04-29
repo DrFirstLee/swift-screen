@@ -271,7 +271,8 @@
             font-size: 13px;
             font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
+            letter-spacing: -0.2px;
+            white-space: nowrap;
             padding-bottom: 10px;
             border-bottom: 2px solid #f1f5f9;
             margin-bottom: 10px;
@@ -472,10 +473,13 @@
         // ── Clock ──
         function updateClock() {
             const now = new Date();
-            const h = String(now.getHours()).padStart(2, '0');
+            let h = now.getHours();
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            h = h % 12;
+            h = h ? h : 12; // the hour '0' should be '12'
             const m = String(now.getMinutes()).padStart(2, '0');
-            const s = String(now.getSeconds()).padStart(2, '0');
-            document.getElementById('clock').textContent = `${h}:${m}:${s}`;
+            
+            document.getElementById('clock').innerHTML = `${h}:${m} <span style="font-size: 0.6em; margin-left: 4px; vertical-align: baseline; color: #94a3b8;">${ampm}</span>`;
             const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
             const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
             const now2 = now;
