@@ -2,7 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SwiftKiosk">
+<link rel="apple-touch-icon" href="kiosk-icon.png">
+<meta name="theme-color" content="#f0f9ff">
 <title>Swift Medical - Self Check-in Kiosk</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&family=Orbitron:wght@700&display=swap" rel="stylesheet">
 <style>
@@ -34,10 +39,10 @@
         background: rgba(255, 255, 255, 0.85);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        width: 100%;
-        max-width: 700px;
+        width: 90%;
+        max-width: 900px;
         border-radius: 40px;
-        padding: 60px;
+        padding: 80px 60px;
         box-shadow: 0 30px 60px rgba(14, 165, 233, 0.15), 
                     inset 0 0 0 1px rgba(255, 255, 255, 0.5);
         text-align: center;
@@ -52,7 +57,7 @@
     .logo-area { margin-bottom: 40px; }
     .logo-text {
         font-family: 'Orbitron', sans-serif;
-        font-size: 42px;
+        font-size: 54px;
         font-weight: 700;
         background: linear-gradient(135deg, #0ea5e9, #0284c7);
         -webkit-background-clip: text;
@@ -60,9 +65,9 @@
         letter-spacing: 2px;
     }
     .subtitle {
-        font-size: 20px;
+        font-size: 24px;
         color: #64748b;
-        margin-top: 8px;
+        margin-top: 12px;
         font-weight: 500;
     }
 
@@ -73,10 +78,10 @@
     }
     .form-label {
         display: block;
-        font-size: 18px;
+        font-size: 22px;
         font-weight: 700;
         color: #334155;
-        margin-bottom: 12px;
+        margin-bottom: 16px;
         margin-left: 8px;
     }
     .input-row {
@@ -90,9 +95,9 @@
         width: 100%;
         background: #ffffff;
         border: 2px solid #e2e8f0;
-        border-radius: 20px;
-        padding: 22px 24px;
-        font-size: 24px;
+        border-radius: 24px;
+        padding: 26px 28px;
+        font-size: 28px;
         font-weight: 600;
         color: #0f172a;
         transition: all 0.3s ease;
@@ -129,8 +134,8 @@
         cursor: pointer;
         transition: all 0.3s ease;
     }
-    .type-card .icon { font-size: 40px; margin-bottom: 12px; }
-    .type-card .title { font-size: 22px; font-weight: 700; color: #475569; }
+    .type-card .icon { font-size: 50px; margin-bottom: 16px; }
+    .type-card .title { font-size: 26px; font-weight: 700; color: #475569; }
     
     .type-option input[type="radio"]:checked + .type-card {
         background: #f0f9ff;
@@ -147,14 +152,14 @@
         background: linear-gradient(135deg, #0ea5e9, #0284c7);
         color: #ffffff;
         border: none;
-        border-radius: 24px;
-        padding: 24px;
-        font-size: 26px;
+        border-radius: 28px;
+        padding: 28px;
+        font-size: 30px;
         font-weight: 800;
         cursor: pointer;
         box-shadow: 0 15px 35px rgba(14, 165, 233, 0.3);
         transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        margin-top: 20px;
+        margin-top: 30px;
     }
     .submit-btn:hover {
         transform: translateY(-4px);
