@@ -234,8 +234,14 @@
         updateClock(); setInterval(updateClock, 30000);
 
         function esc(t) { const d = document.createElement('div'); d.textContent = t; return d.innerHTML }
-        function formatName(f, l) { if (!f || !l) return '—'; return f.charAt(0).toUpperCase() + f.slice(1) + ' ' + l.charAt(0).toUpperCase() + '.' }
-
+        //function formatName(f, l) { if (!f || !l) return '—'; return f.charAt(0).toUpperCase() + f.slice(1) + ' ' + l.charAt(0).toUpperCase() + '.' }
+        function formatName(first, last) {
+            if (!first || !last) return '—';
+            const f = first.charAt(0).toUpperCase() + first.slice(1);
+            // 성이 한 글자(length === 1)이면 '*'로, 아니면 첫 글자 이니셜 표시
+            const l = last.length === 1 ? '*' : last.charAt(0).toUpperCase();
+            return `${f} ${l}.`;
+        }
         async function fetchData() {
             try {
                 const r = await fetch(`${API}/screen-data`);
