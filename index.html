@@ -76,8 +76,15 @@
         }
 
         @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
         }
 
         .header-clock {
@@ -112,7 +119,8 @@
 
         /* ── Main Screen ── */
         .main-screen {
-            flex: 2.2; /* 기존 3에서 2.2로 줄여 사이드바 공간 확보 */
+            flex: 2.2;
+            /* 기존 3에서 2.2로 줄여 사이드바 공간 확보 */
             display: grid;
             gap: 16px;
             height: 100%;
@@ -120,10 +128,21 @@
         }
 
         /* Dynamic grid: 1 = full, 2 = 1x2, 3 = 2x2 (one empty), 4 = 2x2 */
-        .main-screen.grid-1 { grid-template-columns: 1fr; grid-template-rows: 1fr; }
-        .main-screen.grid-2 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr; }
+        .main-screen.grid-1 {
+            grid-template-columns: 1fr;
+            grid-template-rows: 1fr;
+        }
+
+        .main-screen.grid-2 {
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr;
+        }
+
         .main-screen.grid-3,
-        .main-screen.grid-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+        .main-screen.grid-4 {
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+        }
 
         .call-card {
             background: linear-gradient(145deg, #f0f9ff 0%, #e0f2fe 100%);
@@ -142,8 +161,15 @@
         }
 
         @keyframes cardAppear {
-            from { opacity: 0; transform: translateY(30px) scale(0.96); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.96);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
         .call-card .status-badge {
@@ -154,7 +180,7 @@
             align-items: center;
             gap: 8px;
             padding: 6px 14px;
-            background: rgba(255,255,255,0.7);
+            background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(6px);
             border: 1px solid #bae6fd;
             border-radius: 14px;
@@ -172,8 +198,17 @@
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.5); opacity: 0.5; }
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.5);
+                opacity: 0.5;
+            }
         }
 
         .call-card .patient-name {
@@ -235,7 +270,10 @@
             border: 1px solid #bae6fd;
         }
 
-        .empty-icon { font-size: 60px; margin-bottom: 16px; }
+        .empty-icon {
+            font-size: 60px;
+            margin-bottom: 16px;
+        }
 
         .empty-text {
             font-weight: 700;
@@ -250,7 +288,8 @@
         .sidebar {
             flex: 1;
             display: flex;
-            flex-direction: row; /* 좌우 배치로 변경 */
+            flex-direction: row;
+            /* 좌우 배치로 변경 */
             gap: 12px;
             height: 100%;
             overflow: hidden;
@@ -281,8 +320,13 @@
             gap: 8px;
         }
 
-        .sidebar-title.reservation { color: #0ea5e9; }
-        .sidebar-title.walkin { color: #f59e0b; }
+        .sidebar-title.reservation {
+            color: #0ea5e9;
+        }
+
+        .sidebar-title.walkin {
+            color: #f59e0b;
+        }
 
         .sidebar-title .count {
             background: #f1f5f9;
@@ -300,9 +344,18 @@
             padding-right: 4px;
         }
 
-        .sidebar-list::-webkit-scrollbar { width: 4px; }
-        .sidebar-list::-webkit-scrollbar-track { background: transparent; }
-        .sidebar-list::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 4px; }
+        .sidebar-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar-list::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 4px;
+        }
 
         .wait-item {
             padding: 10px 14px;
@@ -374,13 +427,34 @@
         }
 
         @media screen and (max-width: 768px) {
-            .container { padding: 15px; }
-            .main-content { flex-direction: column; }
-            .sidebar { flex-direction: row; }
-            .sidebar-section { flex: 1; }
-            .call-card { border-radius: 18px; padding: 20px 16px; }
-            .logo-img { width: 160px; }
-            .clock-time { font-size: 24px; }
+            .container {
+                padding: 15px;
+            }
+
+            .main-content {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                flex-direction: row;
+            }
+
+            .sidebar-section {
+                flex: 1;
+            }
+
+            .call-card {
+                border-radius: 18px;
+                padding: 20px 16px;
+            }
+
+            .logo-img {
+                width: 160px;
+            }
+
+            .clock-time {
+                font-size: 24px;
+            }
         }
     </style>
 </head>
@@ -478,7 +552,7 @@
             h = h % 12;
             h = h ? h : 12; // the hour '0' should be '12'
             const m = String(now.getMinutes()).padStart(2, '0');
-            
+
             document.getElementById('clock').innerHTML = `${h}:${m} <span style="font-size: 0.6em; margin-left: 4px; vertical-align: baseline; color: #94a3b8;">${ampm}</span>`;
             const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
             const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -490,10 +564,18 @@
         setInterval(updateClock, 1000);
 
         // ── Utilities ──
+        // function formatName(first, last) {
+        //    if (!first || !last) return '—';
+        //    const f = first.charAt(0).toUpperCase() + first.slice(1);
+        //    const l = last.charAt(0).toUpperCase();
+        //    return `${f} ${l}.`;
+        //}
+
         function formatName(first, last) {
             if (!first || !last) return '—';
             const f = first.charAt(0).toUpperCase() + first.slice(1);
-            const l = last.charAt(0).toUpperCase();
+            // 성이 한 글자(length === 1)이면 '*'로, 아니면 첫 글자 이니셜 표시
+            const l = last.length === 1 ? '*' : last.charAt(0).toUpperCase();
             return `${f} ${l}.`;
         }
 
@@ -633,7 +715,7 @@
 
         // ── State Hash ──
         let lastStateHash = '';
-        
+
         function getRelevantState(data) {
             // 스크린에 표시되는 필수 데이터만 추출 (이 데이터가 바뀔 때만 화면 갱신)
             const simplifyPatient = p => ({
@@ -662,7 +744,7 @@
                     const data = JSON.parse(event.data);
                     if (data.version !== lastVersion) {
                         lastVersion = data.version;
-                        
+
                         const newStateHash = getRelevantState(data);
                         if (newStateHash !== lastStateHash) {
                             console.log("[SSE] Relevant state changed, rendering...");
