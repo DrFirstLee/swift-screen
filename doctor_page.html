@@ -23,7 +23,8 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .doctor-name::before{content:'👨‍⚕️';font-size:20px}
 .patient-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f8fafc;border:1px solid #f1f5f9;border-radius:10px;margin-bottom:8px}
 .patient-item .num{font-family:'Orbitron',monospace;font-size:10px;color:#94a3b8;background:#f1f5f9;width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:6px}
-.patient-item .name{font-size:14px;font-weight:700;color:#1e293b;flex:1}
+.patient-item .name{font-size:14px;font-weight:700;color:#1e293b}
+.patient-item .internal-note{font-size:11px;color:#64748b;margin-top:2px}
 .patient-item .type-tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px}
 .patient-item .type-tag.res{background:#e0f2fe;color:#0284c7}
 .patient-item .type-tag.walk{background:#fef3c7;color:#d97706}
@@ -87,7 +88,8 @@ function render(data){
         if(!patients.length){html+='<div class="empty-doc">No patients assigned</div>';}
         else{patients.forEach((p,i)=>{
             const tag=p.type==='reservation'?'<span class="type-tag res">R</span>':'<span class="type-tag walk">W</span>';
-            html+=`<div class="patient-item"><span class="num">${i+1}</span><span class="name">${formatName(p.firstName,p.lastName)}</span>${tag}</div>`;
+            const note=p.internalNote ? `<div class="internal-note">${esc(p.internalNote)}</div>` : '';
+            html+=`<div class="patient-item"><span class="num">${i+1}</span><div style="flex:1"><div class="name">${formatName(p.firstName,p.lastName)}</div>${note}</div>${tag}</div>`;
         })}
         card.innerHTML=html;
         grid.appendChild(card);
@@ -100,7 +102,8 @@ function render(data){
         uItems.innerHTML='';
         unassigned.forEach((p,i)=>{
             const tag=p.type==='reservation'?'<span class="type-tag res">R</span>':'<span class="type-tag walk">W</span>';
-            uItems.innerHTML+=`<div class="patient-item"><span class="num">${i+1}</span><span class="name">${formatName(p.firstName,p.lastName)}</span>${tag}</div>`;
+            const note=p.internalNote ? `<div class="internal-note">${esc(p.internalNote)}</div>` : '';
+            uItems.innerHTML+=`<div class="patient-item"><span class="num">${i+1}</span><div style="flex:1"><div class="name">${formatName(p.firstName,p.lastName)}</div>${note}</div>${tag}</div>`;
         });
     }else{uSec.style.display='none'}
 }
