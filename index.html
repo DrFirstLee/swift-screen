@@ -663,6 +663,7 @@
             // Check if screen list changed for ding and flashing
             const currentIds = screenList.map(p => p.id);
             const prevIds = lastScreenIds ? lastScreenIds.split(',') : [];
+            let shouldPlayDing = false;
             
             currentIds.forEach(id => {
                 const patient = screenList.find(p => p.id === id);
@@ -672,6 +673,7 @@
                     // New patient OR re-called patient
                     activeFlashes[id] = Date.now() + 10000; // 10 seconds
                     if (lastCalled) lastCalledTimestamps[id] = lastCalled;
+                    shouldPlayDing = true;
                     
                     // Trigger a re-render after 10s to remove the flash class
                     setTimeout(() => {
@@ -683,7 +685,9 @@
             });
 
             const newScreenIds = currentIds.join(',');
-            if (newScreenIds !== lastScreenIds && lastScreenIds !== '' && screenList.length > 0) {
+            // Play ding if flag is set, but only if it's not the very first load 
+            // (lastScreenIds is set in initialFetch, so if it's empty here, it's something else)
+            if (shouldPlayDing && lastScreenIds !== '') {
                 playDing();
             }
             lastScreenIds = newScreenIds;
@@ -840,6 +844,13 @@
                 if (response.ok) {
                     const data = await response.json();
                     lastVersion = data.version;
+                    
+                    // Pre-populate to prevent initial flash on load
+                    lastScreenIds = (data.screen_list || []).map(p => p.id).join(',');
+                    (data.screen_list || []).forEach(p => {
+                        if (p.last_called_at) lastCalledTimestamps[p.id] = p.last_called_at;
+                    });
+                    
                     lastStateHash = getRelevantState(data);
                     renderScreenData(data);
                 }
