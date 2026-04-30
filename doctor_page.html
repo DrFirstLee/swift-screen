@@ -237,10 +237,15 @@
         //function formatName(f, l) { if (!f || !l) return '—'; return f.charAt(0).toUpperCase() + f.slice(1) + ' ' + l.charAt(0).toUpperCase() + '.' }
         function formatName(first, last) {
             if (!first || !last) return '—';
+
+            const isKorean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(first + last);
+            if (isKorean) {
+                return last + first;
+            }
+
             const f = first.charAt(0).toUpperCase() + first.slice(1);
-            // 성이 한 글자(length === 1)이면 '*'로, 아니면 첫 글자 이니셜 표시
-            const l = last.length === 1 ? '*' : last.charAt(0).toUpperCase();
-            return `${f} ${l}.`;
+            const l = last.charAt(0).toUpperCase() + last.slice(1);
+            return `${f} ${l}`;
         }
         async function fetchData() {
             try {

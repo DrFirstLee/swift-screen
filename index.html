@@ -107,33 +107,7 @@
             margin-top: 4px;
         }
 
-        /* ── Legend ── */
-        .header-legend {
-            display: flex;
-            gap: 16px;
-            margin-right: 30px;
-        }
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 13px;
-            font-weight: 600;
-            color: #64748b;
-        }
-        .tag-mini {
-            font-size: 10px;
-            font-weight: 800;
-            width: 18px;
-            height: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 4px;
-            color: #fff;
-        }
-        .tag-mini.res { background: #0ea5e9; }
-        .tag-mini.walk { background: #f59e0b; }
+
 
         /* Main Content Layout: 3/4 + 1/4 */
         .main-content {
@@ -287,9 +261,20 @@
 
         /* ── New Call Flash ── */
         @keyframes redFlash {
-            0%, 100% { border-color: #bae6fd; box-shadow: 0 20px 50px rgba(14, 165, 233, 0.08); }
-            50% { border-color: #ef4444; box-shadow: 0 0 30px rgba(239, 68, 68, 0.5); border-width: 4px; }
+
+            0%,
+            100% {
+                border-color: #bae6fd;
+                box-shadow: 0 20px 50px rgba(14, 165, 233, 0.08);
+            }
+
+            50% {
+                border-color: #ef4444;
+                box-shadow: 0 0 30px rgba(239, 68, 68, 0.5);
+                border-width: 4px;
+            }
         }
+
         .new-call {
             animation: redFlash 1s ease-in-out infinite !important;
             border-width: 4px !important;
@@ -506,10 +491,7 @@
         <header class="header">
             <img src="logo-wide.png" alt="Swift Logo" class="logo-img">
             <div style="display: flex; align-items: center;">
-                <div class="header-legend">
-                    <div class="legend-item"><span class="tag-mini res">R</span> Reservation</div>
-                    <div class="legend-item"><span class="tag-mini walk">W</span> Walk-in</div>
-                </div>
+
                 <div class="header-clock">
                     <div class="clock-time" id="clock">00:00:00</div>
                     <div class="clock-date" id="dateDisplay"></div>
@@ -627,21 +609,21 @@
         updateClock();
         setInterval(updateClock, 1000);
 
-        // ── Utilities ──
-        // function formatName(first, last) {
-        //    if (!first || !last) return '—';
-        //    const f = first.charAt(0).toUpperCase() + first.slice(1);
-        //    const l = last.charAt(0).toUpperCase();
-        //    return `${f} ${l}.`;
-        //}
-
         function formatName(first, last) {
             if (!first || !last) return '—';
+            
+            const isKorean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(first + last);
+            if (isKorean) {
+                const fullName = last + first;
+                return fullName.slice(0, -1) + '*';
+            }
+            
             const f = first.charAt(0).toUpperCase() + first.slice(1);
-            // 성이 한 글자(length === 1)이면 '*'로, 아니면 첫 글자 이니셜 표시
-            const l = last.length === 1 ? '*' : last.charAt(0).toUpperCase();
+            const l = last.charAt(0).toUpperCase();
             return `${f} ${l}.`;
         }
+
+
 
         function escapeHtml(text) {
             const div = document.createElement('div');
@@ -651,7 +633,7 @@
 
         function getRoomColor(room) {
             if (!room) return '#64748b';
-            
+
             // Try to find index in the room list from API
             const idx = roomList.findIndex(r => r.toLowerCase() === room.toLowerCase());
             if (idx !== -1) {
@@ -702,17 +684,17 @@
             const currentIds = screenList.map(p => p.id);
             const prevIds = lastScreenIds ? lastScreenIds.split(',') : [];
             let shouldPlayDing = false;
-            
+
             currentIds.forEach(id => {
                 const patient = screenList.find(p => p.id === id);
                 const lastCalled = patient ? patient.last_called_at : null;
-                
+
                 if (!prevIds.includes(id) || (lastCalled && lastCalled !== lastCalledTimestamps[id])) {
                     // New patient OR re-called patient
                     activeFlashes[id] = Date.now() + 10000; // 10 seconds
                     if (lastCalled) lastCalledTimestamps[id] = lastCalled;
                     shouldPlayDing = true;
-                    
+
                     // Trigger a re-render after 10s to remove the flash class
                     setTimeout(() => {
                         if (lastVersion === data.version) {
@@ -758,7 +740,7 @@
                 displayItems.forEach((patient, idx) => {
                     const card = document.createElement('div');
                     card.className = 'call-card';
-                    
+
                     // Apply flash class if within 10s window
                     if (activeFlashes[patient.id] && activeFlashes[patient.id] > Date.now()) {
                         card.classList.add('new-call');
@@ -882,13 +864,13 @@
                 if (response.ok) {
                     const data = await response.json();
                     lastVersion = data.version;
-                    
+
                     // Pre-populate to prevent initial flash on load
                     lastScreenIds = (data.screen_list || []).map(p => p.id).join(',');
                     (data.screen_list || []).forEach(p => {
                         if (p.last_called_at) lastCalledTimestamps[p.id] = p.last_called_at;
                     });
-                    
+
                     lastStateHash = getRelevantState(data);
                     renderScreenData(data);
                 }
