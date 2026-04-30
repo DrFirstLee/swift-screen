@@ -786,7 +786,8 @@
                 first: p.firstName,
                 last: p.lastName,
                 ext: p.externalNote,
-                room: p.room
+                room: p.room,
+                called: p.last_called_at
             });
             return JSON.stringify({
                 screen: (data.screen_list || []).map(simplifyPatient),
