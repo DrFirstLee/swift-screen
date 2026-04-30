@@ -534,6 +534,7 @@
         ];
         let activeFlashes = {}; // { patientId: expiryTimestamp }
         let lastCalledTimestamps = {}; // { patientId: isoTimestamp }
+        let isDataInitialized = false; // Flag to prevent ding on first load
 
         const API_BASE = "https://swift-medical-api.naranja.my";
 
@@ -685,12 +686,12 @@
             });
 
             const newScreenIds = currentIds.join(',');
-            // Play ding if flag is set, but only if it's not the very first load 
-            // (lastScreenIds is set in initialFetch, so if it's empty here, it's something else)
-            if (shouldPlayDing && lastScreenIds !== '') {
+            // Play ding if flag is set, but only if it's not the very first load
+            if (shouldPlayDing && isDataInitialized) {
                 playDing();
             }
             lastScreenIds = newScreenIds;
+            isDataInitialized = true; // Mark as initialized after first render
 
             // ── Main Screen (max 4) ──
             const displayItems = screenList.slice(0, 4);
