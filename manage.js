@@ -62,6 +62,10 @@ function renderAll(d) {
         renderDoctors(d.doctors || []);
         updateDoctorSelects(d.doctors || []);
         
+        console.log("[Render] Rooms list:", d.rooms);
+        renderRooms(d.rooms || []);
+        updateRoomSelects(d.rooms || []);
+        
         if (!document.getElementById('defaultMsg').value && d.default_message) {
             document.getElementById('defaultMsg').value = d.default_message;
         }
@@ -98,6 +102,20 @@ function updateDoctorSelects(docs) {
     document.querySelectorAll('.doctor-select').forEach(sel => {
         const val = sel.value;
         sel.innerHTML = '<option value="">No doctor</option>' + docs.map(d => `<option value="${esc(d)}">${esc(d)}</option>`).join('');
+        sel.value = val;
+    });
+}
+
+function renderRooms(rooms) {
+    const el = document.getElementById('roomList');
+    if (!rooms.length) { el.innerHTML = '<span style="color:#94a3b8">No rooms</span>'; return; }
+    el.innerHTML = rooms.map(r => `<span class="doc-chip">${esc(r)} <button onclick="removeRoom('${esc(r)}')">×</button></span>`).join('');
+}
+
+function updateRoomSelects(rooms) {
+    document.querySelectorAll('.room-select').forEach(sel => {
+        const val = sel.value;
+        sel.innerHTML = '<option value="">No room</option>' + rooms.map(r => `<option value="${esc(r)}">${esc(r)}</option>`).join('');
         sel.value = val;
     });
 }
@@ -254,6 +272,37 @@ async function addDoctor() {
 }
 async function removeDoctor(name) {
     await fetch(`${API}/screen-doctors/${encodeURIComponent(name)}`, { method:'DELETE' });
+    fetchData(true);
+}
+
+// ── Rooms ──
+async function addRoom() {
+    const input = document.getElementById('newRoomName');
+    const name = input.value.trim();
+    if (!name) return;
+    
+    try {
+        const resp = await fetch(`${API}/screen-rooms`, { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json' }, 
+            body: JSON.stringify({ name }) 
+        });
+        
+        if (resp.ok) {
+            input.value = '';
+            await fetchData(true);
+            showToast('Room added');
+        } else {
+            const err = await resp.json();
+            alert("Failed to add room: " + (err.message || "Unknown error"));
+        }
+    } catch (e) {
+        alert("Connection error while adding room.");
+    }
+}
+async function removeRoom(name) {
+    if (!confirm(`Delete room '${name}'?`)) return;
+    await fetch(`${API}/screen-rooms/${encodeURIComponent(name)}`, { method:'DELETE' });
     fetchData(true);
 }
 

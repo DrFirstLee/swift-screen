@@ -149,10 +149,17 @@ select.fi{appearance:none;cursor:pointer;background-image:url("data:image/svg+xm
 </div>
 
 <!-- Config: Doctors -->
-<div class="config-section" style="margin-bottom:40px">
+<div class="config-section">
 <div class="config-title">Doctor Management</div>
 <div id="doctorList" style="margin-bottom:12px"><span style="color:#94a3b8">No doctors</span></div>
 <div class="row"><input type="text" class="fi" id="newDoctorName" placeholder="Doctor name"><button class="sm-btn" onclick="addDoctor()">Add</button></div>
+</div>
+
+<!-- Config: Rooms -->
+<div class="config-section" style="margin-bottom:40px">
+<div class="config-title">Room Management</div>
+<div id="roomList" style="margin-bottom:12px"><span style="color:#94a3b8">No rooms</span></div>
+<div class="row"><input type="text" class="fi" id="newRoomName" placeholder="Room name"><button class="sm-btn" onclick="addRoom()">Add</button></div>
 </div>
 </div>
 
@@ -180,7 +187,7 @@ select.fi{appearance:none;cursor:pointer;background-image:url("data:image/svg+xm
 <label class="fl">Doctor</label><select class="fi doctor-select" id="editDoctor"><option value="">No doctor</option></select>
 <label class="fl">Internal Note</label><input type="text" class="fi" id="editIntNote">
 <label class="fl">External Note (shown on screen)</label><input type="text" class="fi" id="editExtNote">
-<label class="fl">Room / Location</label><input type="text" class="fi" id="editRoom" placeholder="e.g. Clinic 1">
+<label class="fl">Room / Location</label><select class="fi room-select" id="editRoom"><option value="">No room</option></select>
 <div class="modal-btns"><button class="cancel" onclick="document.getElementById('editModal').style.display='none'">Cancel</button><button class="ok" onclick="saveEdit()">Save</button></div>
 </div>
 </div>
@@ -191,7 +198,7 @@ select.fi{appearance:none;cursor:pointer;background-image:url("data:image/svg+xm
 <h3>🔄 Move Patient</h3>
 <div id="moveInfo" style="margin-bottom:12px"></div>
 <div id="moveExtraFields" style="display:none">
-<label class="fl">Room / Location</label><input type="text" class="fi" id="moveRoom" placeholder="Clinic 1">
+<label class="fl">Room / Location</label><select class="fi room-select" id="moveRoom"><option value="">No room</option></select>
 <label class="fl">External Note</label><input type="text" class="fi" id="moveExtNote" placeholder="Shown on screen">
 </div>
 <div class="modal-btns"><button class="cancel" id="cancelMoveBtn">Cancel</button><button class="ok" id="confirmMoveBtn">Confirm</button></div>
