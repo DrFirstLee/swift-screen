@@ -257,6 +257,17 @@
             padding: 6px 20px;
         }
 
+        /* ── New Call Flash ── */
+        @keyframes redFlash {
+            0%, 100% { border-color: #bae6fd; box-shadow: 0 20px 50px rgba(14, 165, 233, 0.08); }
+            50% { border-color: #ef4444; box-shadow: 0 0 30px rgba(239, 68, 68, 0.5); border-width: 4px; }
+        }
+        .new-call {
+            animation: redFlash 1s ease-in-out infinite !important;
+            border-width: 4px !important;
+            z-index: 10;
+        }
+
         /* Empty state for main screen */
         .empty-state {
             grid-column: 1 / -1;
@@ -521,6 +532,7 @@
             '#ec4899', // Pink
             '#475569'  // Slate
         ];
+        let activeFlashes = {}; // { patientId: expiryTimestamp }
 
         const API_BASE = "https://swift-medical-api.naranja.my";
 
@@ -647,8 +659,24 @@
             const defaultMessage = data.default_message || "Welcome to Swift Medical Clinic";
             roomList = data.rooms || []; // Update global room list
 
-            // Check if screen list changed for ding
-            const newScreenIds = screenList.map(p => p.id).join(',');
+            // Check if screen list changed for ding and flashing
+            const currentIds = screenList.map(p => p.id);
+            const prevIds = lastScreenIds ? lastScreenIds.split(',') : [];
+            
+            currentIds.forEach(id => {
+                if (!prevIds.includes(id)) {
+                    // New patient added to screen
+                    activeFlashes[id] = Date.now() + 10000; // 10 seconds
+                    // Trigger a re-render after 10s to remove the flash class
+                    setTimeout(() => {
+                        if (lastVersion === data.version) {
+                            renderScreenData(data);
+                        }
+                    }, 10050);
+                }
+            });
+
+            const newScreenIds = currentIds.join(',');
             if (newScreenIds !== lastScreenIds && lastScreenIds !== '' && screenList.length > 0) {
                 playDing();
             }
@@ -682,6 +710,12 @@
                 displayItems.forEach((patient, idx) => {
                     const card = document.createElement('div');
                     card.className = 'call-card';
+                    
+                    // Apply flash class if within 10s window
+                    if (activeFlashes[patient.id] && activeFlashes[patient.id] > Date.now()) {
+                        card.classList.add('new-call');
+                    }
+
                     card.innerHTML = `
                         <div class="status-badge">
                             <div class="status-dot"></div>
