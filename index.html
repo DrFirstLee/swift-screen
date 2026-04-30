@@ -533,6 +533,7 @@
             '#475569'  // Slate
         ];
         let activeFlashes = {}; // { patientId: expiryTimestamp }
+        let lastCalledTimestamps = {}; // { patientId: isoTimestamp }
 
         const API_BASE = "https://swift-medical-api.naranja.my";
 
@@ -664,9 +665,14 @@
             const prevIds = lastScreenIds ? lastScreenIds.split(',') : [];
             
             currentIds.forEach(id => {
-                if (!prevIds.includes(id)) {
-                    // New patient added to screen
+                const patient = screenList.find(p => p.id === id);
+                const lastCalled = patient ? patient.last_called_at : null;
+                
+                if (!prevIds.includes(id) || (lastCalled && lastCalled !== lastCalledTimestamps[id])) {
+                    // New patient OR re-called patient
                     activeFlashes[id] = Date.now() + 10000; // 10 seconds
+                    if (lastCalled) lastCalledTimestamps[id] = lastCalled;
+                    
                     // Trigger a re-render after 10s to remove the flash class
                     setTimeout(() => {
                         if (lastVersion === data.version) {

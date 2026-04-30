@@ -85,7 +85,8 @@ function renderList(containerId, items, listName) {
         card.dataset.id = item.id;
         card.dataset.list = listName;
         const typeTag = item.type === 'reservation' ? '<span class="tag res">R</span>' : '<span class="tag walk">W</span>';
-        card.innerHTML = `<div class="p-card-top"><span class="p-num">${i+1}</span><strong>${esc(item.firstName)} ${esc(item.lastName)}</strong>${typeTag}${item.doctor?'<span class="tag doc">'+esc(item.doctor)+'</span>':''}</div><div class="p-note">${esc(item.internalNote||'')}</div><div class="p-actions"><button onclick="openEdit('${item.id}')">✏️</button><button onclick="deletePatient('${item.id}')">✕</button></div>`;
+        const bellBtn = listName === 'screen_list' ? `<button onclick="reCallPatient('${item.id}')" title="Recall">🔔</button>` : '';
+        card.innerHTML = `<div class="p-card-top"><span class="p-num">${i+1}</span><strong>${esc(item.firstName)} ${esc(item.lastName)}</strong>${typeTag}${item.doctor?'<span class="tag doc">'+esc(item.doctor)+'</span>':''}</div><div class="p-note">${esc(item.internalNote||'')}</div><div class="p-actions">${bellBtn}<button onclick="openEdit('${item.id}')">✏️</button><button onclick="deletePatient('${item.id}')">✕</button></div>`;
         card.addEventListener('dragstart', onDragStart);
         card.addEventListener('dragend', onDragEnd);
         el.appendChild(card);
@@ -231,6 +232,12 @@ async function deletePatient(id) {
     await fetch(`${API}/screen-delete-patient/${id}`, { method:'DELETE' });
     fetchData(true);
     showToast('Patient deleted');
+}
+
+// ── Recall ──
+async function reCallPatient(id) {
+    await fetch(`${API}/screen-recall/${id}`, { method:'POST' });
+    showToast('Patient recalled');
 }
 
 // ── Clear All ──
