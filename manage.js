@@ -5,6 +5,7 @@ let lastVer = -1;
 let cachedData = null;
 let dragItem = null;
 let dragSource = null;
+let selectedIds = new Set();  // 멀티선택 상태
 
 // ── Auth ──
 async function handleLogin() {
@@ -80,7 +81,7 @@ function renderList(containerId, items, listName) {
     el.innerHTML = '';
     items.forEach((item, i) => {
         const card = document.createElement('div');
-        card.className = 'p-card';
+        card.className = 'p-card' + (selectedIds.has(item.id) ? ' selected' : '');
         card.draggable = true;
         card.dataset.id = item.id;
         card.dataset.list = listName;
@@ -89,6 +90,27 @@ function renderList(containerId, items, listName) {
         card.innerHTML = `<div class="p-card-top"><span class="p-num">${i+1}</span><strong>${esc(item.firstName)} ${esc(item.lastName)}</strong>${typeTag}${item.doctor?'<span class="tag doc">'+esc(item.doctor)+'</span>':''}</div><div class="p-note">${esc(item.internalNote||'')}</div><div class="p-actions">${bellBtn}<button onclick="openEdit('${item.id}')">✏️</button><button onclick="deletePatient('${item.id}')">✕</button></div>`;
         card.addEventListener('dragstart', onDragStart);
         card.addEventListener('dragend', onDragEnd);
+        // 클릭: 선택 토글 (✏️/✕ 버튼 클릭은 제외)
+        card.addEventListener('click', (e) => {
+            if (e.target.closest('.p-actions')) return; // 액션 버튼 클릭 시 무시
+            const id = card.dataset.id;
+            if (e.ctrlKey || e.metaKey) {
+                // Ctrl+Click: 추가/해제
+                if (selectedIds.has(id)) { selectedIds.delete(id); card.classList.remove('selected'); }
+                else { selectedIds.add(id); card.classList.add('selected'); }
+            } else {
+                // 일반 클릭: 해당 카드만 선택 (이미 선택된 1개면 해제)
+                if (selectedIds.has(id) && selectedIds.size === 1) {
+                    selectedIds.clear(); card.classList.remove('selected');
+                } else {
+                    document.querySelectorAll('.p-card.selected').forEach(c => c.classList.remove('selected'));
+                    selectedIds.clear();
+                    selectedIds.add(id);
+                    card.classList.add('selected');
+                }
+            }
+            updateMultiBar();
+        });
         el.appendChild(card);
     });
 }
@@ -127,9 +149,23 @@ function onDragStart(e) {
     dragSource = dragItem.dataset.list;
     dragItem.classList.add('dragging');
     e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', dragItem.dataset.id);
+    // 드래그 시작 카드가 선택 목록에 없으면 단독 선택으로 처리
+    const id = dragItem.dataset.id;
+    if (!selectedIds.has(id)) {
+        document.querySelectorAll('.p-card.selected').forEach(c => c.classList.remove('selected'));
+        selectedIds.clear();
+        selectedIds.add(id);
+        dragItem.classList.add('selected');
+        updateMultiBar();
+    }
+    // dataTransfer에 전체 선택 ID 저장
+    e.dataTransfer.setData('text/plain', JSON.stringify([...selectedIds]));
 }
-function onDragEnd(e) { if(dragItem) dragItem.classList.remove('dragging'); dragItem=null; dragSource=null; document.querySelectorAll('.drop-zone').forEach(z=>z.classList.remove('drag-over')); }
+function onDragEnd(e) {
+    if(dragItem) dragItem.classList.remove('dragging');
+    dragItem=null; dragSource=null;
+    document.querySelectorAll('.drop-zone').forEach(z=>z.classList.remove('drag-over'));
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.drop-zone').forEach(zone => {
@@ -138,17 +174,27 @@ document.addEventListener('DOMContentLoaded', () => {
         zone.addEventListener('drop', e => {
             e.preventDefault(); zone.classList.remove('drag-over');
             const targetList = zone.dataset.list;
-            const patientId = e.dataTransfer.getData('text/plain');
-            if (!patientId || !targetList) return;
-            if (dragSource === targetList) return;
-            openMoveModal(patientId, targetList);
+            if (!targetList) return;
+            let ids;
+            try { ids = JSON.parse(e.dataTransfer.getData('text/plain')); } catch { return; }
+            if (!Array.isArray(ids) || ids.length === 0) return;
+            // 같은 리스트면 무시
+            if (ids.every(id => {
+                const p = findPatient(id);
+                return p && getPatientList(id) === targetList;
+            })) return;
+            if (ids.length === 1) {
+                openMoveModal(ids[0], targetList);
+            } else {
+                openMultiMoveModal(ids, targetList);
+            }
         });
     });
     checkAuth();
     setInterval(() => { if(document.getElementById('mainApp').style.display!=='none') fetchData(); }, 3000);
 });
 
-// ── Move Modal ──
+// ── Move Modal (단일) ──
 function openMoveModal(patientId, targetList) {
     const patient = findPatient(patientId);
     if (!patient) return;
@@ -156,7 +202,6 @@ function openMoveModal(patientId, targetList) {
     const listLabels = { internal_waitlist:'Internal Waitlist', waiting_reservation:'Waiting (Reservation)', waiting_walkin:'Waiting (Walk-in)', screen_list:'Screen List' };
     document.getElementById('moveInfo').innerHTML = `<strong>${esc(patient.firstName)} ${esc(patient.lastName)}</strong> → <strong>${listLabels[targetList]||targetList}</strong>`;
     
-    // Show room/externalNote fields only when moving to screen_list
     const extraFields = document.getElementById('moveExtraFields');
     if (targetList === 'screen_list') {
         extraFields.style.display = 'block';
@@ -175,10 +220,67 @@ function openMoveModal(patientId, targetList) {
         }
         await fetch(`${API}/screen-move-patient`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ patient_id:patientId, target_list:targetList, updates }) });
         modal.style.display = 'none';
+        clearSelection();
         fetchData(true);
         showToast('Patient moved');
     };
     document.getElementById('cancelMoveBtn').onclick = () => { modal.style.display = 'none'; };
+}
+
+// ── Move Modal (멀티 드래그) ──
+function openMultiMoveModal(ids, targetList) {
+    const listLabels = { internal_waitlist:'Internal Waitlist', waiting_reservation:'Waiting (Reservation)', waiting_walkin:'Waiting (Walk-in)', screen_list:'Screen List' };
+    const modal = document.getElementById('moveModal');
+    document.getElementById('moveInfo').innerHTML = `<strong>${ids.length}명</strong> → <strong>${listLabels[targetList]||targetList}</strong>`;
+    const extraFields = document.getElementById('moveExtraFields');
+    if (targetList === 'screen_list') {
+        extraFields.style.display = 'block';
+        document.getElementById('moveRoom').value = '';
+        document.getElementById('moveExtNote').value = '';
+    } else {
+        extraFields.style.display = 'none';
+    }
+    modal.style.display = 'flex';
+    document.getElementById('confirmMoveBtn').onclick = async () => {
+        const updates = {};
+        if (targetList === 'screen_list') {
+            updates.room = document.getElementById('moveRoom').value;
+            updates.externalNote = document.getElementById('moveExtNote').value;
+        }
+        await Promise.all(ids.map(id =>
+            fetch(`${API}/screen-move-patient`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ patient_id:id, target_list:targetList, updates }) })
+        ));
+        modal.style.display = 'none';
+        clearSelection();
+        fetchData(true);
+        showToast(`${ids.length}명 이동 완료`);
+    };
+    document.getElementById('cancelMoveBtn').onclick = () => { modal.style.display = 'none'; };
+}
+
+// ── 멀티선택 플로팅 바 ──
+function updateMultiBar() {
+    const bar = document.getElementById('multiBar');
+    const count = selectedIds.size;
+    document.getElementById('multiCount').textContent = `${count}명 선택`;
+    if (count > 0) bar.classList.add('visible');
+    else bar.classList.remove('visible');
+}
+
+function clearSelection() {
+    selectedIds.clear();
+    document.querySelectorAll('.p-card.selected').forEach(c => c.classList.remove('selected'));
+    updateMultiBar();
+}
+
+async function multiMoveTo(targetList) {
+    if (selectedIds.size === 0) return;
+    const ids = [...selectedIds];
+    if (ids.length === 1) {
+        openMoveModal(ids[0], targetList);
+        return;
+    }
+    openMultiMoveModal(ids, targetList);
 }
 
 function findPatient(id) {
@@ -186,6 +288,14 @@ function findPatient(id) {
     for (const list of ['internal_waitlist','waiting_reservation','waiting_walkin','screen_list']) {
         const found = (cachedData[list]||[]).find(p => p.id === id);
         if (found) return found;
+    }
+    return null;
+}
+
+function getPatientList(id) {
+    if (!cachedData) return null;
+    for (const list of ['internal_waitlist','waiting_reservation','waiting_walkin','screen_list']) {
+        if ((cachedData[list]||[]).find(p => p.id === id)) return list;
     }
     return null;
 }
