@@ -70,6 +70,10 @@ function renderAll(d) {
         if (!document.getElementById('defaultMsg').value && d.default_message) {
             document.getElementById('defaultMsg').value = d.default_message;
         }
+        const toggle = document.getElementById('lunchBreakToggle');
+        if (toggle) {
+            toggle.checked = !!d.is_lunch_break;
+        }
     } catch (err) {
         console.error("[Render] Error in renderAll:", err);
     }
@@ -441,6 +445,19 @@ async function saveConfig() {
     if (!msg) return;
     await fetch(`${API}/screen-config`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({default_message:msg}) });
     showToast('Config saved');
+}
+
+async function toggleLunchBreak() {
+    const toggle = document.getElementById('lunchBreakToggle');
+    if (!toggle) return;
+    const isLunchBreak = toggle.checked;
+    await fetch(`${API}/screen-config`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_lunch_break: isLunchBreak })
+    });
+    showToast(isLunchBreak ? 'Lunch Break Mode ON' : 'Lunch Break Mode OFF');
+    fetchData(true);
 }
 
 // ── Util ──
