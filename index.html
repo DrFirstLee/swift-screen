@@ -731,7 +731,7 @@
             if (count === 0) {
                 if (data.is_lunch_break) {
                     mainScreen.innerHTML = `
-                        <div class="lunch-break-state" style="grid-column: 1 / -1; grid-row: 1 / -1; display: flex; flex-direction: column; justify-content: space-between; align-items: stretch; background: #ffffff; border-radius: 28px; border: 1px solid #e2e8f0; padding: 24px 45px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.02); height: 100%; position: relative;">
+                        <div class="lunch-break-state" style="grid-column: 1 / -1; grid-row: 1 / -1; display: flex; flex-direction: column; justify-content: center; gap: 24px; align-items: stretch; background: #ffffff; border-radius: 28px; border: 1px solid #e2e8f0; padding: 30px 45px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.02); height: 100%; position: relative;">
                             <!-- Left border deco -->
                             <div style="position: absolute; left: 24px; top: 30px; bottom: 30px; width: 2px; background: linear-gradient(180deg, transparent, #cbd5e1 10%, #cbd5e1 90%, transparent); display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 15px;">
                                 <div style="width: 5px; height: 5px; border-radius: 50%; border: 2px solid #94a3b8; background: #fff;"></div>
@@ -747,9 +747,9 @@
                             
                             <!-- Top Left: English -->
                             <div style="display: flex; flex-direction: column; justify-content: flex-start; text-align: left; padding-left: 20px;">
-                                <h1 style="font-family: 'Outfit', sans-serif; font-size: clamp(24px, 4.2vw, 52px); font-weight: 800; color: #0f172a; line-height: 1.1; margin-bottom: 2px;">🍱 Lunch Break</h1>
-                                <h2 style="font-family: 'Outfit', sans-serif; font-size: clamp(16px, 2.6vw, 30px); font-weight: 700; color: #0ea5e9; margin-bottom: 10px;">⏱️ 1:00 PM – 1:30 PM</h2>
-                                <p style="font-size: clamp(12px, 1.8vw, 20px); color: #475569; line-height: 1.4; font-weight: 500; white-space: pre-line; margin: 0;">
+                                <h1 style="font-family: 'Outfit', sans-serif; font-size: clamp(28px, 4.8vw, 60px); font-weight: 800; color: #0f172a; line-height: 1.1; margin-bottom: 2px;">🍱 Lunch Break</h1>
+                                <h2 style="font-family: 'Outfit', sans-serif; font-size: clamp(18px, 3vw, 36px); font-weight: 700; color: #0ea5e9; margin-bottom: 10px;">⏱️ 1:00 PM – 1:30 PM</h2>
+                                <p style="font-size: clamp(14px, 2.2vw, 24px); color: #475569; line-height: 1.4; font-weight: 500; white-space: pre-line; margin: 0;">
                                     We are closed for staff lunch.
                                     Please enjoy coffee or tea in the waiting area. ☕
                                     Check-in will resume at 1:30 PM. Thank you!
@@ -757,10 +757,10 @@
                             </div>
                             
                             <!-- Bottom Right: Korean -->
-                            <div style="display: flex; flex-direction: column; justify-content: flex-end; text-align: right; border-top: 1px solid #f1f5f9; padding-top: 12px; padding-right: 20px;">
-                                <h1 style="font-family: 'Noto Sans KR', sans-serif; font-size: clamp(22px, 3.8vw, 46px); font-weight: 900; color: #0f172a; line-height: 1.1; margin-bottom: 2px;">🍱 점심시간</h1>
-                                <h2 style="font-family: 'Noto Sans KR', sans-serif; font-size: clamp(15px, 2.2vw, 26px); font-weight: 700; color: #0ea5e9; margin-bottom: 10px;">⏱️ 오후 1:00 ~ 1:30</h2>
-                                <p style="font-size: clamp(11px, 1.6vw, 18px); color: #475569; line-height: 1.4; font-weight: 500; white-space: pre-line; margin: 0;">
+                            <div style="display: flex; flex-direction: column; justify-content: flex-end; text-align: right; border-top: 1px solid #f1f5f9; padding-top: 20px; padding-right: 20px;">
+                                <h1 style="font-family: 'Noto Sans KR', sans-serif; font-size: clamp(26px, 4.4vw, 54px); font-weight: 900; color: #0f172a; line-height: 1.1; margin-bottom: 2px;">🍱 점심시간</h1>
+                                <h2 style="font-family: 'Noto Sans KR', sans-serif; font-size: clamp(17px, 2.6vw, 32px); font-weight: 700; color: #0ea5e9; margin-bottom: 10px;">⏱️ 오후 1:00 ~ 1:30</h2>
+                                <p style="font-size: clamp(13px, 2vw, 22px); color: #475569; line-height: 1.4; font-weight: 500; white-space: pre-line; margin: 0;">
                                     점심시간 동안 잠시 운영을 중단합니다.
                                     대기실의 커피나 차를 마시며 잠시 기다려 주세요. ☕
                                     오후 1시 30분부터 접수를 재개합니다. 감사합니다!
