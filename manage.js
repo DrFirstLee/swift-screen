@@ -283,6 +283,18 @@ async function multiMoveTo(targetList) {
     openMultiMoveModal(ids, targetList);
 }
 
+async function multiDelete() {
+    if (selectedIds.size === 0) return;
+    const ids = [...selectedIds];
+    if (!confirm(`선택한 ${ids.length}명을 삭제하시겠습니까?`)) return;
+    await Promise.all(ids.map(id =>
+        fetch(`${API}/screen-delete-patient/${id}`, { method: 'DELETE' })
+    ));
+    clearSelection();
+    fetchData(true);
+    showToast(`${ids.length}명 삭제 완료`);
+}
+
 function findPatient(id) {
     if (!cachedData) return null;
     for (const list of ['internal_waitlist','waiting_reservation','waiting_walkin','screen_list']) {
