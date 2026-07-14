@@ -586,7 +586,7 @@
                 osc.start(startTime);
                 osc.stop(startTime + duration);
             }
-            playNote(783.99, now, 0.8);
+            // playNote(783.99, now, 0.8);
             playNote(1046.50, now + 0.15, 1.0);
         }
 
@@ -611,13 +611,13 @@
 
         function formatName(first, last) {
             if (!first || !last) return '—';
-            
+
             const isKorean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(first + last);
             if (isKorean) {
                 const fullName = last + first;
                 return fullName.slice(0, -1) + '*';
             }
-            
+
             const f = first.charAt(0).toUpperCase() + first.slice(1);
             const l = last.charAt(0).toUpperCase();
             return `${f} ${l}.`;
