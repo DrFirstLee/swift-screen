@@ -51,6 +51,8 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .p-card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;margin-bottom:8px;cursor:grab;transition:.2s;position:relative;user-select:none}
 .p-card:hover{border-color:#0ea5e9;box-shadow:0 4px 12px rgba(14,165,233,.06);transform:translateY(-1px)}
 .p-card.dragging{opacity:.4;border:2px dashed #0ea5e9}
+.p-card.drag-before::before{content:'';position:absolute;top:-6px;left:0;right:0;height:4px;background:#0ea5e9;border-radius:2px;pointer-events:none}
+.p-card.drag-after::after{content:'';position:absolute;bottom:-6px;left:0;right:0;height:4px;background:#0ea5e9;border-radius:2px;pointer-events:none}
 .p-card.selected{border-color:#0ea5e9;background:#eff8ff;box-shadow:0 0 0 2px #0ea5e9;transform:translateY(-1px)}
 .p-card.selected::after{content:'✓';position:absolute;top:6px;left:-10px;width:20px;height:20px;background:#0ea5e9;color:#fff;border-radius:50%;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;line-height:20px;text-align:center;box-shadow:0 2px 6px rgba(14,165,233,.4)}
 .p-card-top{display:flex;align-items:center;gap:6px;flex-wrap:wrap}

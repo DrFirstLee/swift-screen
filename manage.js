@@ -169,24 +169,89 @@ function onDragEnd(e) {
     if(dragItem) dragItem.classList.remove('dragging');
     dragItem=null; dragSource=null;
     document.querySelectorAll('.drop-zone').forEach(z=>z.classList.remove('drag-over'));
+    document.querySelectorAll('.p-card').forEach(c=>c.classList.remove('drag-before', 'drag-after'));
+}
+
+// ── Reorder Helpers ──
+function getDragAfterElement(container, y, draggingIds) {
+    const draggableElements = [...container.querySelectorAll('.p-card')].filter(el => {
+        return !draggingIds.has(el.dataset.id);
+    });
+
+    return draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        if (offset < 0 && offset > closest.offset) {
+            return { offset: offset, element: child };
+        } else {
+            return closest;
+        }
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+function getLastCard(container, draggingIds) {
+    const cards = [...container.querySelectorAll('.p-card')].filter(el => !draggingIds.has(el.dataset.id));
+    return cards.length ? cards[cards.length - 1] : null;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.drop-zone').forEach(zone => {
-        zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
-        zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+        zone.addEventListener('dragover', e => {
+            e.preventDefault();
+            zone.classList.add('drag-over');
+            const targetList = zone.dataset.list;
+            if (dragSource === targetList) {
+                // Clear indicators on all cards in this zone
+                zone.querySelectorAll('.p-card').forEach(c => c.classList.remove('drag-before', 'drag-after'));
+                const afterElement = getDragAfterElement(zone, e.clientY, selectedIds);
+                if (afterElement) {
+                    afterElement.classList.add('drag-before');
+                } else {
+                    const lastCard = getLastCard(zone, selectedIds);
+                    if (lastCard) {
+                        lastCard.classList.add('drag-after');
+                    }
+                }
+            }
+        });
+        zone.addEventListener('dragleave', () => {
+            zone.classList.remove('drag-over');
+            zone.querySelectorAll('.p-card').forEach(c => c.classList.remove('drag-before', 'drag-after'));
+        });
         zone.addEventListener('drop', e => {
-            e.preventDefault(); zone.classList.remove('drag-over');
+            e.preventDefault();
+            zone.classList.remove('drag-over');
+            zone.querySelectorAll('.p-card').forEach(c => c.classList.remove('drag-before', 'drag-after'));
             const targetList = zone.dataset.list;
             if (!targetList) return;
             let ids;
             try { ids = JSON.parse(e.dataTransfer.getData('text/plain')); } catch { return; }
             if (!Array.isArray(ids) || ids.length === 0) return;
-            // 같은 리스트면 무시
-            if (ids.every(id => {
-                const p = findPatient(id);
-                return p && getPatientList(id) === targetList;
-            })) return;
+            
+            // Same-list reordering
+            const sourceList = getPatientList(ids[0]);
+            if (sourceList === targetList) {
+                const afterElement = getDragAfterElement(zone, e.clientY, new Set(ids));
+                const currentItems = cachedData[targetList] || [];
+                const currentIds = currentItems.map(item => item.id);
+                
+                // Remove the dragged IDs from the list
+                const filteredIds = currentIds.filter(id => !ids.includes(id));
+                
+                let insertIndex = filteredIds.length;
+                if (afterElement) {
+                    const afterId = afterElement.dataset.id;
+                    insertIndex = filteredIds.indexOf(afterId);
+                }
+                
+                // Insert dragged IDs at new index
+                filteredIds.splice(insertIndex, 0, ...ids);
+                
+                reorderList(targetList, filteredIds);
+                return;
+            }
+            
+            // Cross-list moving
             if (ids.length === 1) {
                 openMoveModal(ids[0], targetList);
             } else {
@@ -195,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     checkAuth();
-    setInterval(() => { if(document.getElementById('mainApp').style.display!=='none') fetchData(); }, 3000);
+    setInterval(() => { if(document.getElementById('mainApp').style.display!=='none' && !dragItem) fetchData(); }, 3000);
 });
 
 // ── Move Modal (단일) ──
@@ -260,6 +325,27 @@ function openMultiMoveModal(ids, targetList) {
         showToast(`${ids.length}명 이동 완료`);
     };
     document.getElementById('cancelMoveBtn').onclick = () => { modal.style.display = 'none'; };
+}
+
+async function reorderList(listName, ids) {
+    try {
+        const resp = await fetch(`${API}/screen-reorder`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ list_name: listName, ids: ids })
+        });
+        if (resp.ok) {
+            clearSelection();
+            await fetchData(true);
+            showToast('List reordered');
+        } else {
+            const err = await resp.json();
+            alert("Failed to reorder: " + (err.message || "Unknown error"));
+        }
+    } catch (e) {
+        console.error("[Reorder] Error:", e);
+        alert("Connection error while reordering.");
+    }
 }
 
 // ── 멀티선택 플로팅 바 ──
